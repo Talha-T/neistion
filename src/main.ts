@@ -1,7 +1,7 @@
 import { getSandhandsSchema } from "./decorator";
 import express, { Express, RequestHandler } from "express";
 import { NeistionOptions, ISandhandsSchema, IApiCall } from "./options";
-import { getMethodFromMethodEnum, getConstructorFromString } from "./utils";
+import { getMethodFromMethodEnum } from "./utils";
 import bodyParser from "body-parser";
 import { HttpMethod } from ".";
 import { valid, details } from "sandhands";
@@ -40,12 +40,16 @@ class Neistion implements INeistion {
     /**
      * Constructs Neistion Object.
      * @param options The required options, includes api calls too.
+     * @param autoSetup Set as false, if you don't want to setup API on constructor.
      */
-    constructor(options: NeistionOptions) {
+    constructor(options: NeistionOptions, autoSetup = true) {
         this.options = options;
         // Set json option to true by default.
         if (this.options.json === undefined) {
             this.options.json = true;
+        }
+        if (autoSetup) {
+            this.setup();
         }
     }
     private server!: Express;
@@ -58,7 +62,7 @@ class Neistion implements INeistion {
 
                 try {
                     // Get parameters considering method.
-                    const parameters = apiCall.method === HttpMethod.GET ? req.query
+                    const parameters = apiCall.method === "GET" ? req.query
                         : req.body;
 
                     // Check parameter types
@@ -129,6 +133,10 @@ class Neistion implements INeistion {
 
         // Loops through all methods and registers them to the express.
         this.options.calls.forEach((call) => {
+            // If provided a string, get registered class.
+            if (typeof(call.parametersSchema) === "string") {
+                call.parametersSchema = getSandhandsSchema(call.parametersSchema);
+            }
             this.handleRequest(call,
                 getMethodFromMethodEnum(call.method, this.server))
         });

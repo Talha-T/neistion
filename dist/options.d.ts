@@ -1,29 +1,24 @@
+/// <reference types="node" />
 import { Express } from "express";
 import { IncomingHttpHeaders } from "http";
-
 /**
  * Represents available http methods.
-*/
-type HttpMethod = "GET" | "POST" | "PUT" | "DELETE";
-
-// Available types for sandhands.
-type VariableType = StringConstructor | BooleanConstructor | NumberConstructor
-    | ObjectConstructor | undefined | null;
-
+ *
+ * Combine methods via bitwise OR (|) operator.
+ */
+declare enum HttpMethod {
+    GET = 1,
+    POST = 2,
+    PUT = 4,
+    DELETE = 8
+}
+declare type VariableType = StringConstructor | BooleanConstructor | NumberConstructor | ObjectConstructor | undefined | null;
 /**
  * Defines how a sandhands schema should be.
  */
 interface ISandhandsSchema {
-    [key: string]: VariableType
+    [key: string]: VariableType;
 }
-
-/**
- * Defines how a parameter schema should be.
- */
-interface IParametersSchema {
-    [key: string]: ISandhandsSchema
-}
-
 /**
  * Defines an api call and its properties
  */
@@ -35,58 +30,34 @@ interface IApiCall {
     /**
      * The http method for this api.
      */
-    method: HttpMethod,
+    method: HttpMethod;
     /**
      * The schema of required parameter object. Put an empty object if not required.
-     * You can use ClassName instead of providing a schema, too.
      */
-    parametersSchema: ISandhandsSchema | string,
+    parametersSchema: ISandhandsSchema;
     /**
      * The express route string.
      */
-    route: string,
+    route: string;
     /**
      * The optional verify function.
      */
     verify?: (headers: IncomingHttpHeaders, parameters: IncomingParameters) => Promise<boolean> | boolean;
 }
-
-/**
- * Defines a wrapper for request headers.
- */
-interface IHeaders {
-    [header: string]: string;
-}
-
-/**
- * Predefines Authorization header.
- */
-interface IAuthorizationHeaders extends IHeaders {
-    Authorization: string;
-}
-
-/**
- * Predefines x-access-token header.
- */
-interface IAccessTokenHeaders extends IHeaders {
-    "x-access-token": string;
-}
-
 /**
  * Defines incoming parameters.
  */
 interface IncomingParameters {
     [key: string]: any;
 }
-
 /**
  * Defines the main Apifier class.
  */
 interface NeistionOptions {
     /**
-     * List of api methods and commands for this route. 
+     * List of api methods and commands for this route.
      */
-    calls: IApiCall[],
+    calls: IApiCall[];
     /**
      * Whether debugging should be made or not.
      */
@@ -101,5 +72,4 @@ interface NeistionOptions {
      */
     json?: boolean;
 }
-
 export { NeistionOptions, ISandhandsSchema, HttpMethod, IApiCall };
