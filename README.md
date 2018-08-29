@@ -18,9 +18,9 @@ const api = new Neistion({
             parametersSchema: getSandhandsSchema("TestParameter"),
             route: "/test",
             async call(parameters: any) {
-                return parameters;
+                return parameters; // Automatically serialized to JSON
             },
-            verify(headers, parameters) {
+            verify(headers, parameters) { // Optional
                 if (headers.authorization) {
                     return true;
                 }
@@ -33,6 +33,9 @@ const api = new Neistion({
 
 api.setup();
 api.start(5000);
+
+// localhost:5000/test?a=b
+// {"a": "b"}
 ```
 ### Setup
 `npm install neistion --save`
