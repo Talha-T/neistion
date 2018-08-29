@@ -1,6 +1,6 @@
 import { getSandhandsSchema } from "./decorator";
 import express, { Express, RequestHandler } from "express";
-import { NeistionOptions, ISandhandsSchema, IApiCall } from "./options";
+import { NeistionOptions, ISandhandsSchema, IApiCall, IStatusMessagePair } from "./options";
 import { getMethodFromMethodEnum } from "./utils";
 import bodyParser from "body-parser";
 import { HttpMethod } from ".";
@@ -84,6 +84,32 @@ class Neistion implements INeistion {
                         }
                     }
 
+                    // Stuff here is complicated because of callbacks..
+                    const shouldContinue = await (new Promise((resolve, reject) => {
+                        if (typeof (apiCall.verifyCallback) === "function") {
+                            this.debug("Verifying..");
+                            apiCall.verifyCallback(req.headers, parameters, (result: boolean | IStatusMessagePair) => {
+                                if (typeof (result) == "boolean") {
+                                    if (!result) {
+                                        res.status(401).send("Unauthorized");
+                                        return resolve(false);
+                                    }
+                                    return resolve(true);
+                                }
+                                else {
+                                    res.status(result.status).send(
+                                        JSON.stringify(result.message)
+                                    );
+                                    return resolve(false);
+                                }
+                            });
+                        }
+                    }
+                    ));
+
+                    if (!shouldContinue) {
+                        return;
+                    }
                     // Run the API call.
                     const result = await apiCall.call(parameters);
                     // Convert to json, if wanted.
@@ -134,7 +160,7 @@ class Neistion implements INeistion {
         // Loops through all methods and registers them to the express.
         this.options.calls.forEach((call) => {
             // If provided a string, get registered class.
-            if (typeof(call.parametersSchema) === "string") {
+            if (typeof (call.parametersSchema) === "string") {
                 call.parametersSchema = getSandhandsSchema(call.parametersSchema);
             }
             this.handleRequest(call,

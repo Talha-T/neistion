@@ -25,6 +25,20 @@ interface IParametersSchema {
 }
 
 /**
+ * Represents a class with message and status.
+ */
+interface IStatusMessagePair {
+    /**
+     * The message of the pair.
+     */
+    message: string;
+    /**
+     * The status of the pair.
+     */
+    status: number;
+}
+
+/**
  * Defines an api call and its properties
  */
 interface IApiCall {
@@ -48,7 +62,14 @@ interface IApiCall {
     /**
      * The optional verify function.
      */
-    verify?: (headers: IncomingHttpHeaders, parameters: IncomingParameters) => Promise<boolean> | boolean;
+    verify?: (headers: IncomingHttpHeaders, parameters: IncomingParameters) =>
+        Promise<boolean> | boolean | Promise<IStatusMessagePair> | IStatusMessagePair;
+    /**
+     * The optional verify function, but with a callback instead.
+     */
+    verifyCallback?: (headers: IncomingHttpHeaders, parameters: IncomingParameters,
+        returnCallback: (result: IStatusMessagePair | boolean) => void) => void;
+
 }
 
 /**
@@ -102,4 +123,4 @@ interface NeistionOptions {
     json?: boolean;
 }
 
-export { NeistionOptions, ISandhandsSchema, HttpMethod, IApiCall };
+export { NeistionOptions, ISandhandsSchema, IStatusMessagePair, HttpMethod, IApiCall };
