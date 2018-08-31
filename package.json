@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Talha-T/apified.git"
+    "url": "git+https://github.com/Talha-T/neistion.git"
   },
   "keywords": [
     "api",
@@ -19,9 +19,9 @@
   "author": "implicit",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Talha-T/apified/issues"
+    "url": "https://github.com/Talha-T/neistion/issues"
   },
-  "homepage": "https://github.com/Talha-T/apified#readme",
+  "homepage": "https://github.com/Talha-T/neistion#readme",
   "dependencies": {
     "express": "^4.16.3",
     "reflect-metadata": "^0.1.12",
