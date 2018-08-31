@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const options_1 = require("./options");
 /**
  * Returns http methods from enums.
  * @param method The HTTP method to get Enum for.
@@ -8,10 +7,10 @@ const options_1 = require("./options");
  */
 function getMethodFromMethodEnum(method, express) {
     const map = {
-        [options_1.HttpMethod.GET]: (route, handler) => express.get(route, handler),
-        [options_1.HttpMethod.POST]: (route, handler) => express.post(route, handler),
-        [options_1.HttpMethod.PUT]: (route, handler) => express.put(route, handler),
-        [options_1.HttpMethod.DELETE]: (route, handler) => express.delete(route, handler),
+        GET: (route, handler) => express.get(route, handler),
+        POST: (route, handler) => express.post(route, handler),
+        PUT: (route, handler) => express.put(route, handler),
+        DELETE: (route, handler) => express.delete(route, handler),
     };
     return map[method];
 }

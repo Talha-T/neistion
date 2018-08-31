@@ -1,23 +1,30 @@
 /// <reference types="node" />
+/// <reference types="express" />
 import { Express } from "express";
 import { IncomingHttpHeaders } from "http";
 /**
  * Represents available http methods.
- *
- * Combine methods via bitwise OR (|) operator.
- */
-declare enum HttpMethod {
-    GET = 1,
-    POST = 2,
-    PUT = 4,
-    DELETE = 8
-}
+*/
+declare type HttpMethod = "GET" | "POST" | "PUT" | "DELETE";
 declare type VariableType = StringConstructor | BooleanConstructor | NumberConstructor | ObjectConstructor | undefined | null;
 /**
  * Defines how a sandhands schema should be.
  */
 interface ISandhandsSchema {
     [key: string]: VariableType;
+}
+/**
+ * Represents a class with message and status.
+ */
+interface IStatusMessagePair {
+    /**
+     * The message of the pair.
+     */
+    message: string;
+    /**
+     * The status of the pair.
+     */
+    status: number;
 }
 /**
  * Defines an api call and its properties
@@ -33,8 +40,9 @@ interface IApiCall {
     method: HttpMethod;
     /**
      * The schema of required parameter object. Put an empty object if not required.
+     * You can use ClassName instead of providing a schema, too.
      */
-    parametersSchema: ISandhandsSchema;
+    parametersSchema: ISandhandsSchema | string;
     /**
      * The express route string.
      */
@@ -42,7 +50,11 @@ interface IApiCall {
     /**
      * The optional verify function.
      */
-    verify?: (headers: IncomingHttpHeaders, parameters: IncomingParameters) => Promise<boolean> | boolean;
+    verify?: (headers: IncomingHttpHeaders, parameters: IncomingParameters) => Promise<boolean> | boolean | Promise<IStatusMessagePair> | IStatusMessagePair;
+    /**
+     * The optional verify function, but with a callback instead.
+     */
+    verifyCallback?: (headers: IncomingHttpHeaders, parameters: IncomingParameters, returnCallback: (result: IStatusMessagePair | boolean) => void) => void;
 }
 /**
  * Defines incoming parameters.
@@ -72,4 +84,4 @@ interface NeistionOptions {
      */
     json?: boolean;
 }
-export { NeistionOptions, ISandhandsSchema, HttpMethod, IApiCall };
+export { NeistionOptions, ISandhandsSchema, IStatusMessagePair, HttpMethod, IApiCall, IncomingParameters, VariableType };

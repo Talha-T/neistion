@@ -15,4 +15,4 @@ declare function sandhandsProp(target: any, key: string): void;
  * @param key The class name of the schema generated.
  */
 declare function getSandhandsSchema(key: string): ISandhandsSchema;
-export { sandhandsProp, getSandhandsSchema };
+export { sandhandsProp, getSandhandsSchema, ISandhandsSchema, VariableType };

@@ -9,13 +9,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
-};
+}
 Object.defineProperty(exports, "__esModule", { value: true });
 const decorator_1 = require("./decorator");
 const express_1 = __importDefault(require("express"));
 const utils_1 = require("./utils");
 const body_parser_1 = __importDefault(require("body-parser"));
-const _1 = require(".");
 const sandhands_1 = require("sandhands");
 /**
  * The main class for Neistion.
@@ -24,8 +23,9 @@ class Neistion {
     /**
      * Constructs Neistion Object.
      * @param options The required options, includes api calls too.
+     * @param autoSetup Set as false, if you don't want to setup API on constructor.
      */
-    constructor(options) {
+    constructor(options, autoSetup = true) {
         this.handleRequest = (apiCall, expressMethod) => {
             expressMethod(apiCall.route, (req, res) => __awaiter(this, void 0, void 0, function* () {
                 this.debug("A call to: " + apiCall.route);
@@ -33,7 +33,7 @@ class Neistion {
                 // Otherwise, returns status code 500 (Internal Server Error).
                 try {
                     // Get parameters considering method.
-                    const parameters = apiCall.method === _1.HttpMethod.GET ? req.query
+                    const parameters = apiCall.method === "GET" ? req.query
                         : req.body;
                     // Check parameter types
                     if (!sandhands_1.valid(parameters, apiCall.parametersSchema)) {
@@ -49,6 +49,28 @@ class Neistion {
                             // If not verified, return unauthorized.
                             return res.status(401).send("Unauthorized");
                         }
+                    }
+                    // Stuff here is complicated because of callbacks..
+                    const shouldContinue = yield (new Promise((resolve, reject) => {
+                        if (typeof (apiCall.verifyCallback) === "function") {
+                            this.debug("Verifying..");
+                            apiCall.verifyCallback(req.headers, parameters, (result) => {
+                                if (typeof (result) == "boolean") {
+                                    if (!result) {
+                                        res.status(401).send("Unauthorized");
+                                        return resolve(false);
+                                    }
+                                    return resolve(true);
+                                }
+                                else {
+                                    res.status(result.status).send(JSON.stringify(result.message));
+                                    return resolve(false);
+                                }
+                            });
+                        }
+                    }));
+                    if (!shouldContinue) {
+                        return;
                     }
                     // Run the API call.
                     const result = yield apiCall.call(parameters);
@@ -78,6 +100,9 @@ class Neistion {
         if (this.options.json === undefined) {
             this.options.json = true;
         }
+        if (autoSetup) {
+            this.setup();
+        }
     }
     debug(message) {
         if (this.options.debug) {
@@ -99,6 +124,10 @@ class Neistion {
         }));
         // Loops through all methods and registers them to the express.
         this.options.calls.forEach((call) => {
+            // If provided a string, get registered class.
+            if (typeof (call.parametersSchema) === "string") {
+                call.parametersSchema = decorator_1.getSandhandsSchema(call.parametersSchema);
+            }
             this.handleRequest(call, utils_1.getMethodFromMethodEnum(call.method, this.server));
         });
         this.debug("Loaded all routes!");

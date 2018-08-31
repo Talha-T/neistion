@@ -19,34 +19,30 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const index_1 = require("./index");
 class TestParameter {
-    constructor() {
-        this.present = false;
-    }
 }
 __decorate([
     index_1.sandhandsProp,
-    __metadata("design:type", Boolean)
-], TestParameter.prototype, "present", void 0);
+    __metadata("design:type", String)
+], TestParameter.prototype, "a", void 0);
 const api = new index_1.Neistion({
     calls: [
         {
-            method: index_1.HttpMethod.POST,
-            parametersSchema: index_1.getSandhandsSchema("TestParameter"),
+            method: "GET",
+            parametersSchema: "TestParameter",
             route: "/test",
             call(parameters) {
                 return __awaiter(this, void 0, void 0, function* () {
                     return parameters;
                 });
             },
-            verify(headers, parameters) {
-                if (headers.authorization) {
-                    return true;
-                }
-                return false;
+            verifyCallback(headers, parameters, callback) {
+                setTimeout(() => callback({
+                    status: 200,
+                    message: "Unauthorized but OK!"
+                }), 2000);
             }
         }
     ],
     debug: true
 });
-api.setup();
 api.start(5000);

@@ -123,4 +123,7 @@ interface NeistionOptions {
     json?: boolean;
 }
 
-export { NeistionOptions, ISandhandsSchema, IStatusMessagePair, HttpMethod, IApiCall };
+export {
+    NeistionOptions, ISandhandsSchema, IStatusMessagePair, HttpMethod, IApiCall,
+    IncomingParameters, VariableType
+};

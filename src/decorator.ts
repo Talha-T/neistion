@@ -53,4 +53,4 @@ function getSandhandsSchema(key: string): ISandhandsSchema {
     return schemas[key];
 }
 
-export { sandhandsProp, getSandhandsSchema };
+export { sandhandsProp, getSandhandsSchema, ISandhandsSchema, VariableType };

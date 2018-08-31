@@ -28,11 +28,12 @@ declare class Neistion implements INeistion {
     /**
      * Constructs Neistion Object.
      * @param options The required options, includes api calls too.
+     * @param autoSetup Set as false, if you don't want to setup API on constructor.
      */
-    constructor(options: NeistionOptions);
+    constructor(options: NeistionOptions, autoSetup?: boolean);
     private server;
     private handleRequest;
-    private debug;
+    private debug(message);
     /**
      * Gets sandhands schema from Typescript class.
      * You need to put @sandhandsProp decorator for every property.

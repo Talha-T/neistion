@@ -1,3 +1,4 @@
+/// <reference types="express" />
 import { HttpMethod } from "./options";
 import { Express, RequestHandler } from "express";
 /**
