@@ -1,3 +1,25 @@
+- [Neistion](#neistion)
+    - [Installation](#installation)
+    - [Minimal Example](#minimal-example)
+    - [API](#api)
+        - [new Neistion([options])](#new-neistionoptions)
+            - [options: NeistionOptions](#options-neistionoptions)
+            - [- #### calls: IApiCall[]](#calls-iapicall)
+            - [ - #### IApiCall](#iapicall)
+            - [call: \<PT>(parameters: PT) => Promise<any> | any](#call-ptparameters-pt--promiseany--any)
+            - [method: "GET" | "POST" | "PUT" | "DELETE"](#method-%22get%22--%22post%22--%22put%22--%22delete%22)
+            - [parametersSchema: ISandhandsSchema | string](#parametersschema-isandhandsschema--string)
+            - [route: string](#route-string)
+            - [verify?: (headers: IncomingHttpHeaders, parameters: IncomingParameters) => Promise\<boolean> | boolean | Promise\<IStatusMessagePair> | IStatusMessagePair](#verify-headers-incominghttpheaders-parameters-incomingparameters--promiseboolean--boolean--promiseistatusmessagepair--istatusmessagepair)
+            - [verifyCallback?: (headers: IncomingHttpHeaders, parameters: IncomingParameters, returnCallback: (result: IStatusMessagePair | boolean) => void) => void](#verifycallback-headers-incominghttpheaders-parameters-incomingparameters-returncallback-result-istatusmessagepair--boolean--void--void)
+            - [- #### debug?: boolean](#debug-boolean)
+            - [- #### express?: (express: Express) => Promise\<void>](#express-express-express--promisevoid)
+            - [- #### json?: boolean](#json-boolean)
+            - [api.start(port)](#apistartport)
+            - [api.setup()](#apisetup)
+    - [Missing something?](#missing-something)
+    - [Contact](#contact)
+
 # Neistion
 **Only focus on your API. Literally nothing else.**  
 node.js API's made easy.
@@ -93,6 +115,11 @@ Neistion constructor takes a **required** [`NeistionOptions`](#options) instance
     Takes express instance in. You can do anything with express you need here. Runs after defining routes.
 - #### json?: boolean
     Whether JSON serialization should be made or not. If not, literal objects are written to requests.
+
+#### api.start(port)
+    Starts the API up at the given port. **You need to re-`setup()` everytime you modify options of api.**
+#### api.setup()
+    Redefines the routes, depending on options.
 
 ## Missing something?
 Feel free to open an issue for requests. They are welcome.
