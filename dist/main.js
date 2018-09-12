@@ -68,6 +68,9 @@ class Neistion {
                                 }
                             });
                         }
+                        else {
+                            resolve(true);
+                        }
                     }));
                     if (!shouldContinue) {
                         return;

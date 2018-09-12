@@ -104,6 +104,9 @@ class Neistion implements INeistion {
                                 }
                             });
                         }
+                        else {
+                            resolve(true);
+                        }
                     }
                     ));
 
