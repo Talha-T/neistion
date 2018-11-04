@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
-}
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const decorator_1 = require("./decorator");
 const express_1 = __importDefault(require("express"));
@@ -27,7 +27,8 @@ class Neistion {
      */
     constructor(options, autoSetup = true) {
         this.handleRequest = (apiCall, expressMethod) => {
-            expressMethod(apiCall.route, (req, res) => __awaiter(this, void 0, void 0, function* () {
+            const routeMiddlewares = apiCall.perRouteMiddlewares || [];
+            expressMethod(apiCall.route, ...routeMiddlewares, (req, res) => __awaiter(this, void 0, void 0, function* () {
                 this.debug("A call to: " + apiCall.route);
                 // Sends the result, if ran succesfully.
                 // Otherwise, returns status code 500 (Internal Server Error).
@@ -35,11 +36,13 @@ class Neistion {
                     // Get parameters considering method.
                     const parameters = apiCall.method === "GET" ? req.query
                         : req.body;
+                    const schema = typeof (apiCall.parametersSchema) === "string"
+                        ? decorator_1.getSandhandsSchema(apiCall.parametersSchema) : apiCall.parametersSchema;
                     // Check parameter types
-                    if (!sandhands_1.valid(parameters, apiCall.parametersSchema)) {
+                    if (!sandhands_1.valid(parameters, schema)) {
                         // Send 400 error with missing parameters.
                         this.debug("Parameters not valid!");
-                        const errors = sandhands_1.details(parameters, apiCall.parametersSchema);
+                        const errors = sandhands_1.details(parameters, schema);
                         return res.status(400).send(this.options.json ? JSON.stringify(errors) : errors);
                     }
                     // Run verify function.

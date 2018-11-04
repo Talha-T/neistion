@@ -33,7 +33,7 @@ declare class Neistion implements INeistion {
     constructor(options: NeistionOptions, autoSetup?: boolean);
     private server;
     private handleRequest;
-    private debug(message);
+    private debug;
     /**
      * Gets sandhands schema from Typescript class.
      * You need to put @sandhandsProp decorator for every property.

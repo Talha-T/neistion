@@ -7,10 +7,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
  */
 function getMethodFromMethodEnum(method, express) {
     const map = {
-        GET: (route, handler) => express.get(route, handler),
-        POST: (route, handler) => express.post(route, handler),
-        PUT: (route, handler) => express.put(route, handler),
-        DELETE: (route, handler) => express.delete(route, handler),
+        GET: (route, ...handlers) => express.get(route, handlers),
+        POST: (route, ...handlers) => express.post(route, handlers),
+        PUT: (route, ...handlers) => express.put(route, handlers),
+        DELETE: (route, ...handlers) => express.delete(route, handlers),
     };
     return map[method];
 }
