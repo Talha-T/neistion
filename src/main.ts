@@ -53,9 +53,10 @@ class Neistion implements INeistion {
         }
     }
     private server!: Express;
-    private handleRequest: (call: IApiCall, expressMethod: (route: string, handler: RequestHandler) => void) => void =
+    private handleRequest: (call: IApiCall, expressMethod: (route: string, ...handlers: RequestHandler[]) => void) => void =
         (apiCall, expressMethod) => {
-            expressMethod(apiCall.route, async (req, res) => {
+            const routeMiddlewares = apiCall.perRouteMiddlewares || [];
+            expressMethod(apiCall.route, ...routeMiddlewares, async (req, res) => {
                 this.debug("A call to: " + apiCall.route);
                 // Sends the result, if ran succesfully.
                 // Otherwise, returns status code 500 (Internal Server Error).
@@ -65,11 +66,14 @@ class Neistion implements INeistion {
                     const parameters = apiCall.method === "GET" ? req.query
                         : req.body;
 
+                    const schema: any = typeof (apiCall.parametersSchema) === "string"
+                        ? getSandhandsSchema(apiCall.parametersSchema) : apiCall.parametersSchema;
+
                     // Check parameter types
-                    if (!valid(parameters, apiCall.parametersSchema)) {
+                    if (!valid(parameters, schema)) {
                         // Send 400 error with missing parameters.
                         this.debug("Parameters not valid!");
-                        const errors = details(parameters, apiCall.parametersSchema);
+                        const errors = details(parameters, schema);
                         return res.status(400).send(
                             this.options.json ? JSON.stringify(errors) : errors
                         );

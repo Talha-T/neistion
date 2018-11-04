@@ -1,4 +1,4 @@
-import { Express } from "express";
+import { Express, RequestHandler } from "express";
 import { IncomingHttpHeaders } from "http";
 
 /**
@@ -52,9 +52,13 @@ interface IApiCall {
     method: HttpMethod,
     /**
      * The schema of required parameter object. Put an empty object if not required.
-     * You can use ClassName instead of providing a schema, too.
+     * You can use ClassName for a class with sandhandsProp decorator instead of providing a schema, too.
      */
     parametersSchema: ISandhandsSchema | string,
+    /**
+     * An array of middlewares to be run only for this route.
+     */
+    perRouteMiddlewares?: RequestHandler[];
     /**
      * The express route string.
      */

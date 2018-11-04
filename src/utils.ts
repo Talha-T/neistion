@@ -8,14 +8,14 @@ import { Express, RequestHandler } from "express";
  */
 export function getMethodFromMethodEnum(method: HttpMethod, express: Express) {
     const map = {
-        GET: (route: string, handler: RequestHandler) =>
-            express.get(route, handler),
-        POST: (route: string, handler: RequestHandler) =>
-            express.post(route, handler),
-        PUT: (route: string, handler: RequestHandler) =>
-            express.put(route, handler),
-        DELETE: (route: string, handler: RequestHandler) =>
-            express.delete(route, handler),
+        GET: (route: string, ...handlers: RequestHandler[]) =>
+            express.get(route, handlers),
+        POST: (route: string, ...handlers: RequestHandler[]) =>
+            express.post(route, handlers),
+        PUT: (route: string, ...handlers: RequestHandler[]) =>
+            express.put(route, handlers),
+        DELETE: (route: string, ...handlers: RequestHandler[]) =>
+            express.delete(route, handlers),
     }
     return map[method];
 }

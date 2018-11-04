@@ -4,17 +4,17 @@
     - [API](#api)
         - [new Neistion([options])](#new-neistionoptions)
             - [options: NeistionOptions](#options-neistionoptions)
-            - [- #### calls: IApiCall[]](#calls-iapicall)
-            - [ - #### IApiCall](#iapicall)
+            - [calls: IApiCall[]](#calls-iapicall)
+            - [IApiCall](#iapicall)
             - [call: \<PT>(parameters: PT) => Promise<any> | any](#call-ptparameters-pt--promiseany--any)
             - [method: "GET" | "POST" | "PUT" | "DELETE"](#method-%22get%22--%22post%22--%22put%22--%22delete%22)
             - [parametersSchema: ISandhandsSchema | string](#parametersschema-isandhandsschema--string)
             - [route: string](#route-string)
             - [verify?: (headers: IncomingHttpHeaders, parameters: IncomingParameters) => Promise\<boolean> | boolean | Promise\<IStatusMessagePair> | IStatusMessagePair](#verify-headers-incominghttpheaders-parameters-incomingparameters--promiseboolean--boolean--promiseistatusmessagepair--istatusmessagepair)
             - [verifyCallback?: (headers: IncomingHttpHeaders, parameters: IncomingParameters, returnCallback: (result: IStatusMessagePair | boolean) => void) => void](#verifycallback-headers-incominghttpheaders-parameters-incomingparameters-returncallback-result-istatusmessagepair--boolean--void--void)
-            - [- #### debug?: boolean](#debug-boolean)
-            - [- #### express?: (express: Express) => Promise\<void>](#express-express-express--promisevoid)
-            - [- #### json?: boolean](#json-boolean)
+            - [debug?: boolean](#debug-boolean)
+            - [express?: (express: Express) => Promise\<void>](#express-express-express--promisevoid)
+            - [json?: boolean](#json-boolean)
             - [api.start(port)](#apistartport)
             - [api.setup()](#apisetup)
     - [Missing something?](#missing-something)
@@ -101,6 +101,8 @@ Neistion constructor takes a **required** [`NeistionOptions`](#options) instance
         parametersSchema: "ApiParameterType"
         // Because we defined sandhandsProp decorator on property, we can just type the name.
         ```
+        #### perRouteMiddlewares: RequestHandler[]
+        An array of middlewares to be run only for this route.
         #### route: string
         The route string, used by express.
         You can use dynamic routes too, whatever express supports as a route.
