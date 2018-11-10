@@ -25,9 +25,12 @@ class Neistion {
      * @param options The required options, includes api calls too.
      * @param autoSetup Set as false, if you don't want to setup API on constructor.
      */
-    constructor(options, autoSetup = true) {
+    constructor(options = { calls: [] }, autoSetup = true) {
         this.handleRequest = (apiCall, expressMethod) => {
             const routeMiddlewares = apiCall.perRouteMiddlewares || [];
+            const sandhandsOptions = {
+                strict: this.options.strictPropertyCheck || false
+            };
             expressMethod(apiCall.route, ...routeMiddlewares, (req, res) => __awaiter(this, void 0, void 0, function* () {
                 this.debug("A call to: " + apiCall.route);
                 // Sends the result, if ran succesfully.
@@ -39,10 +42,10 @@ class Neistion {
                     const schema = typeof (apiCall.parametersSchema) === "string"
                         ? decorator_1.getSandhandsSchema(apiCall.parametersSchema) : apiCall.parametersSchema;
                     // Check parameter types
-                    if (!sandhands_1.valid(parameters, schema)) {
+                    if (!sandhands_1.valid(parameters, schema, sandhandsOptions)) {
                         // Send 400 error with missing parameters.
                         this.debug("Parameters not valid!");
-                        const errors = sandhands_1.details(parameters, schema);
+                        const errors = sandhands_1.details(parameters, schema, sandhandsOptions);
                         return res.status(400).send(this.options.json ? JSON.stringify(errors) : errors);
                     }
                     // Run verify function.
@@ -115,6 +118,13 @@ class Neistion {
             console.log(message);
         }
     }
+    handleCall(call) {
+        // If provided a string, get registered class.
+        if (typeof (call.parametersSchema) === "string") {
+            call.parametersSchema = decorator_1.getSandhandsSchema(call.parametersSchema);
+        }
+        this.handleRequest(call, utils_1.getMethodFromMethodEnum(call.method, this.server));
+    }
     /**
      * Sets the server up, but doesn't start it.
      */
@@ -130,11 +140,7 @@ class Neistion {
         }));
         // Loops through all methods and registers them to the express.
         this.options.calls.forEach((call) => {
-            // If provided a string, get registered class.
-            if (typeof (call.parametersSchema) === "string") {
-                call.parametersSchema = decorator_1.getSandhandsSchema(call.parametersSchema);
-            }
-            this.handleRequest(call, utils_1.getMethodFromMethodEnum(call.method, this.server));
+            this.handleCall(call);
         });
         this.debug("Loaded all routes!");
     }
@@ -152,6 +158,14 @@ class Neistion {
             yield this.server.listen(port);
             this.debug("Started server!");
         });
+    }
+    /**
+     * Adds an API call to the route handlers.
+     * @param call The API Call to add to.
+     */
+    addApiCall(call) {
+        this.options.calls.push(call);
+        this.handleCall(call);
     }
 }
 exports.Neistion = Neistion;

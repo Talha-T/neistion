@@ -1,4 +1,4 @@
-import { NeistionOptions, ISandhandsSchema } from "./options";
+import { NeistionOptions, ISandhandsSchema, IApiCall } from "./options";
 /**
  * Defines what a Neistion should have.
  */
@@ -30,10 +30,11 @@ declare class Neistion implements INeistion {
      * @param options The required options, includes api calls too.
      * @param autoSetup Set as false, if you don't want to setup API on constructor.
      */
-    constructor(options: NeistionOptions, autoSetup?: boolean);
+    constructor(options?: NeistionOptions, autoSetup?: boolean);
     private server;
     private handleRequest;
     private debug;
+    private handleCall;
     /**
      * Gets sandhands schema from Typescript class.
      * You need to put @sandhandsProp decorator for every property.
@@ -52,5 +53,10 @@ declare class Neistion implements INeistion {
      * @param port Port to listen to.
      */
     start(port: Number): Promise<void>;
+    /**
+     * Adds an API call to the route handlers.
+     * @param call The API Call to add to.
+     */
+    addApiCall(call: IApiCall): void;
 }
 export { INeistion, Neistion };

@@ -12,9 +12,17 @@ const api = new index_1.Neistion({
             call(parameters) {
                 return "success!";
             },
-            parametersSchema: {}
+            parametersSchema: {},
         }
     ],
     debug: true
 });
 api.start(3000);
+api.addApiCall({
+    method: "GET",
+    route: "/test2",
+    call(parameters) {
+        return parameters;
+    },
+    parametersSchema: {}
+});
