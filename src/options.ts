@@ -125,6 +125,10 @@ interface NeistionOptions {
      * True by default.
      */
     json?: boolean;
+    /**
+     * If set to true, parameter objects with extra properties will be an invalid parameter.
+     */
+    strictPropertyCheck?: boolean;
 }
 
 export {

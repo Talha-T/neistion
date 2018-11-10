@@ -15,8 +15,10 @@
             - [debug?: boolean](#debug-boolean)
             - [express?: (express: Express) => Promise\<void>](#express-express-express--promisevoid)
             - [json?: boolean](#json-boolean)
+            - [strictPropertyCheck?: boolean](#strictPropertyCheck-boolean)
             - [api.start(port)](#apistartport)
             - [api.setup()](#apisetup)
+            - [api.addApiCall()](#apiaddApiCallcall)
     - [Missing something?](#missing-something)
     - [Contact](#contact)
 
@@ -117,11 +119,15 @@ Neistion constructor takes a **required** [`NeistionOptions`](#options) instance
     Takes express instance in. You can do anything with express you need here. Runs after defining routes.
 - #### json?: boolean
     Whether JSON serialization should be made or not. If not, literal objects are written to requests.
+- #### strictPropertyCheck?: boolean
+    If set to true, parameter objects with extra properties will be an invalid parameter.
 
 #### api.start(port)
-    Starts the API up at the given port. **You need to re-`setup()` everytime you modify options of api.**
+    Starts the API up at the given port.
 #### api.setup()
-    Redefines the routes, depending on options.
+    Redefines the routes from scratch, depending on options.
+#### api.addApiCall(call)
+    Adds an API call to the route handlers. You do not need to `setup()` after this function.
 
 ## Missing something?
 Feel free to open an issue for requests. They are welcome.
