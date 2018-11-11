@@ -85,9 +85,17 @@ class Neistion implements INeistion {
                     // Run verify function.
                     if (apiCall.verify) {
                         this.debug("Verifying..");
-                        if (!(await apiCall.verify(req.headers, parameters))) {
+                        const verifyResult = await apiCall.verify(req.headers, parameters);
+                        // If returned a boolean and it is false, send unauthorized.
+                        if (typeof (verifyResult) === "boolean" && !verifyResult) {
                             // If not verified, return unauthorized.
                             return res.status(401).send("Unauthorized");
+                        }
+                        // If object present, send it directly.
+                        else if (typeof (verifyResult) === "object") {
+                            return res.status(verifyResult.status).send(
+                                JSON.stringify(verifyResult.message)
+                            );
                         }
                     }
 
