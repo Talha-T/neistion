@@ -41,7 +41,7 @@ interface IStatusMessagePair {
 /**
  * Defines an api call and its properties
  */
-interface IApiCall {
+interface IApiRoute {
     /**
      * The function called when verified succesfully.
      */
@@ -111,7 +111,7 @@ interface NeistionOptions {
     /**
      * List of api methods and commands for this route. 
      */
-    calls: IApiCall[],
+    routes: IApiRoute[],
     /**
      * Whether debugging should be made or not.
      */
@@ -132,6 +132,6 @@ interface NeistionOptions {
 }
 
 export {
-    NeistionOptions, ISandhandsSchema, IStatusMessagePair, HttpMethod, IApiCall,
+    NeistionOptions, ISandhandsSchema, IStatusMessagePair, HttpMethod, IApiRoute,
     IncomingParameters, VariableType
 };

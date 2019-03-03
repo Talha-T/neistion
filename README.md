@@ -1,36 +1,24 @@
 - [Neistion](#neistion)
-    - [Installation](#installation)
-    - [Minimal Example](#minimal-example)
-    - [API](#api)
-        - [new Neistion([options])](#new-neistionoptions)
-            - [options: NeistionOptions](#options-neistionoptions)
-            - [calls: IApiCall[]](#calls-iapicall)
-            - [IApiCall](#iapicall)
-            - [call: \<PT>(parameters: PT) => Promise<any> | any](#call-ptparameters-pt--promiseany--any)
-            - [method: "GET" | "POST" | "PUT" | "DELETE"](#method-%22get%22--%22post%22--%22put%22--%22delete%22)
-            - [parametersSchema: ISandhandsSchema | string](#parametersschema-isandhandsschema--string)
-            - [route: string](#route-string)
-            - [verify?: (headers: IncomingHttpHeaders, parameters: IncomingParameters) => Promise\<boolean> | boolean | Promise\<IStatusMessagePair> | IStatusMessagePair](#verify-headers-incominghttpheaders-parameters-incomingparameters--promiseboolean--boolean--promiseistatusmessagepair--istatusmessagepair)
-            - [verifyCallback?: (headers: IncomingHttpHeaders, parameters: IncomingParameters, returnCallback: (result: IStatusMessagePair | boolean) => void) => void](#verifycallback-headers-incominghttpheaders-parameters-incomingparameters-returncallback-result-istatusmessagepair--boolean--void--void)
-            - [debug?: boolean](#debug-boolean)
-            - [express?: (express: Express) => Promise\<void>](#express-express-express--promisevoid)
-            - [json?: boolean](#json-boolean)
-            - [strictPropertyCheck?: boolean](#strictPropertyCheck-boolean)
-            - [api.start(port)](#apistartport)
-            - [api.setup()](#apisetup)
-            - [api.addApiCall()](#apiaddApiCallcall)
-    - [Missing something?](#missing-something)
-    - [Contact](#contact)
+  - [Installation](#installation)
+  - [Minimal Example](#minimal-example)
+  - [API](#api)
+    - [new Neistion([options])](#new-neistionoptions)
+      - [options: NeistionOptions](#options-neistionoptions)
+      - [api.start(port)](#apistartport)
+      - [api.setup()](#apisetup)
+      - [api.addApiCall(call)](#apiaddapicallcall)
+  - [Missing something?](#missing-something)
+  - [Contact](#contact)
 
 # Neistion
-**Only focus on your API. Literally nothing else.**  
+**Declare your APIs instead of building them.**  
 node.js API's made easy.
 Neistion comes with predefined parameter validation, authorization and more you can think of.
 ## Installation
 ```sh
 $ npm install neistion --save
 ```
-Remember to add these lines to tsconfig.json:
+Remember to add these lines to tsconfig.json (if you are going to use decorators):
 ```
 "experimentalDecorators": true,
 "emitDecoratorMetadata": true
