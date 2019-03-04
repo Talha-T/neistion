@@ -7,13 +7,14 @@
       - [api.start(port)](#apistartport)
       - [api.setup()](#apisetup)
       - [api.addApiCall(call)](#apiaddapicallcall)
+      - [api.addRoutesFromDirectory(routesDirectoryPath)](#apiaddroutesfromdirectoryroutesdirectorypath)
   - [Missing something?](#missing-something)
   - [Contact](#contact)
 
 # Neistion
 **Declare your APIs instead of building them.**  
-node.js API's made easy.
-Neistion comes with predefined parameter validation, authorization and more you can think of.
+Neistion comes with predefined parameter validation and sanitization, authorization and more you can think of.
+Neistion is born to **simplify** your job as a framework.
 ## Installation
 ```sh
 $ npm install neistion --save
@@ -25,26 +26,38 @@ Remember to add these lines to tsconfig.json (if you are going to use decorators
 ```
 ## Minimal Example
 ```ts
-import { Neistion } from "./index";
+import { IncomingHttpHeaders } from "http";
+import { Neistion, sandhandsProp } from "./index";
+
+class RandomParameters {
+  @sandhandsProp
+  public min!: number;
+  @sandhandsProp
+  public max!: number;
+}
 
 const api = new Neistion({
-    calls: [
-        {
-            method: "GET",
-            parametersSchema: {},
-            route: "/test",
-            call(parameters: any) {
-                return parameters; // Automatically serialized to JSON
-            }
-        }
-    ]
+  routes: [
+    {
+      route: "/random",
+      method: "GET",
+      parametersSchema: "RandomParameters",
+      call(parameters: RandomParameters) {
+        const { max, min } = parameters;
+        return Math.floor(Math.random() * (max - min)) + min;
+      },
+      verify(headers: IncomingHttpHeaders, parameters: RandomParameters) {
+        return parameters.max > parameters.min;
+      }
+    }
+  ],
+  debug: true,
+  strictPropertyCheck: true
 });
 
-api.start(5000);
-
-// localhost:5000/test?a=b
-// {"a": "b"}
+api.start(3000);
 ```
+![example](minimal_example.gif)
 ## API
 ```ts
 import { Neistion } from "neistion";
@@ -55,21 +68,19 @@ const api = new Neistion(
 );
 ```
 
-The `api` object is where you define and start your API. You must provide a valid options object, as your API is defined there.
+The `api` object is where you declare and start your API. You can provide an options object if you need.
 
 ### new Neistion([options])
 
 Returns the main Neistion object, which empowers the API.
 
-Neistion constructor takes a **required** [`NeistionOptions`](#options) instance.
-
 #### options: NeistionOptions
 
-- #### calls: [IApiCall](#iapicall)[]
-    This is where you define your **api calls**, so this should be defined.
-    - #### IApiCall
-        #### call: \<PT>(parameters: PT) => Promise<any> | any
-        The main function for the API call. Runs last, after ~~`normalizeParameters`~~,  ~~`transformParameters`~~ and [`verify`](#verify).
+- #### routes: [IApiRoute](#iapiroute)[]
+    This is where you define your **api calls** within options, so this should be defined even if it should be empty.
+    - #### IApiRoute<PT>
+        #### call: (parameters: PT) => Promise<any> | any
+        The function to be called for the API route. Runs last, after ~~`normalizeParameters`~~,  ~~`transformParameters`~~ and [`verify`](#verify).
         #### method: "GET" | "POST" | "PUT" | "DELETE"
         The method of the API call, as a string.
         #### parametersSchema: ISandhandsSchema | string
@@ -77,10 +88,12 @@ Neistion constructor takes a **required** [`NeistionOptions`](#options) instance
         Examples: 
         ```ts
         {
-            key: String
+            key: String,
+            number: Number,
+            isCool: Boolean
         }
         ```
-        or, as a Typescript class:
+        or, as a Typescript class using power of decorators:
         ```ts
         import { sandhandsProp } from "neistion";
         class ApiParameterType {
@@ -89,20 +102,20 @@ Neistion constructor takes a **required** [`NeistionOptions`](#options) instance
         }
         // ...,
         parametersSchema: "ApiParameterType"
-        // Because we defined sandhandsProp decorator on property, we can just type the name.
+        // Because we defined sandhandsProp decorator on property, we can just type the name. Otherwise, we should duplicat e it.
         ```
         #### perRouteMiddlewares: RequestHandler[]
         An array of middlewares to be run only for this route.
         #### route: string
         The route string, used by express.
         You can use dynamic routes too, whatever express supports as a route.
-        #### verify?: (headers: IncomingHttpHeaders, parameters: IncomingParameters) => Promise\<boolean> | boolean | Promise\<IStatusMessagePair> | IStatusMessagePair
+        #### verify?: (headers: IncomingHttpHeaders, parameters: PT) => Promise\<boolean> | boolean | Promise\<IStatusMessagePair> | IStatusMessagePair
         Takes in `headers` and `parameters` of the request, and returns one of the types above.
         Use this for authentication.
         #### verifyCallback?: (headers: IncomingHttpHeaders, parameters: IncomingParameters,       returnCallback: (result: IStatusMessagePair | boolean) => void) => void
         Same as `verify`, but waits for the callback instead. Designed to be used with old libraries, using callbacks.
 - #### debug?: boolean
-    Whether the library should log the messages or not.
+    Whether the library should log the debug messages or not.
 - #### express?: (express: Express) => Promise\<void>
     Takes express instance in. You can do anything with express you need here. Runs after defining routes.
 - #### json?: boolean
@@ -116,6 +129,19 @@ Neistion constructor takes a **required** [`NeistionOptions`](#options) instance
     Redefines the routes from scratch, depending on options.
 #### api.addApiCall(call)
     Adds an API call to the route handlers. You do not need to `setup()` after this function.
+#### api.addRoutesFromDirectory(routesDirectoryPath)
+    Adds all modules inside given directory as routes to the API.
+    Example tree structure:
+    ```ts
+    api.addRoutesFromDirectory() // uses the default path, which is /routes
+    ```
+
+    ```
+    - routes
+        - random.js
+        - index.js
+    ```
+    All of the files inside `routes` directory should implement IApiRoute, otherwise an error will be thrown.
 
 ## Missing something?
 Feel free to open an issue for requests. They are welcome.

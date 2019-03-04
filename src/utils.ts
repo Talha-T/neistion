@@ -1,4 +1,4 @@
-import { HttpMethod } from "./options";
+import { HttpMethod, IApiRoute } from "./options";
 import { Express, RequestHandler } from "express";
 
 /**
@@ -20,12 +20,10 @@ export function getMethodFromMethodEnum(method: HttpMethod, express: Express) {
     return map[method];
 }
 
-export function getConstructorFromString(typeString: string) {
-    const map: { [key: string]: Function} = {
-        Object: Object,
-        Boolean: Boolean,
-        String: String,
-        Number: Number
-    }
-    return map[typeString];
+/**
+ * Checks if object is a correct IApiRoute.
+ * @param object Object to check for.
+ */
+export function instanceOfApiRoute<T>(object: any): object is IApiRoute<T> {
+    return 'route' in object;
 }

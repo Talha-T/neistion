@@ -6,7 +6,10 @@ import {
   IApiRoute,
   IStatusMessagePair
 } from "./options";
-import { getMethodFromMethodEnum } from "./utils";
+import {
+  getMethodFromMethodEnum,
+  instanceOfApiRoute,
+} from "./utils";
 import bodyParser from "body-parser";
 import { valid, details } from "sandhands";
 import directoryRoutes from "directory-routes";
@@ -58,8 +61,8 @@ class Neistion implements INeistion {
     }
   }
   private server!: Express;
-  private handleRequest: (
-    routeDefinition: IApiRoute,
+  private handleRequest: <T>(
+    routeDefinition: IApiRoute<T>,
     expressMethod: (route: string, ...handlers: RequestHandler[]) => void
   ) => void = (apiRoute, expressMethod) => {
     const routeMiddlewares = apiRoute.perRouteMiddlewares || [];
@@ -79,6 +82,14 @@ class Neistion implements INeistion {
           typeof apiRoute.parametersSchema === "string"
             ? getSandhandsSchema(apiRoute.parametersSchema)
             : apiRoute.parametersSchema;
+
+        // Converts parameters to correct type according to schema
+        Object.keys(schema).forEach(key => {
+          // Avoid errors
+          if (parameters[key]) {
+            parameters[key] = schema[key](parameters[key]);
+          }
+        });
 
         // Check parameter types
         if (!valid(parameters, schema, sandhandsOptions)) {
@@ -153,12 +164,15 @@ class Neistion implements INeistion {
       console.log(message);
     }
   }
-  private handleRoute(route: IApiRoute): void {
+  private handleRoute<T>(route: IApiRoute<T>): void {
     // If provided a string, get registered class.
     if (typeof route.parametersSchema === "string") {
       route.parametersSchema = getSandhandsSchema(route.parametersSchema);
     }
-    this.handleRequest(route, getMethodFromMethodEnum(route.method, this.server));
+    this.handleRequest(
+      route,
+      getMethodFromMethodEnum(route.method, this.server)
+    );
   }
   /**
    * Gets sandhands schema from Typescript class.
@@ -212,14 +226,30 @@ class Neistion implements INeistion {
    * Adds an API route to the route handlers.
    * @param route The API route to add to.
    */
-  public addRoute(route: IApiRoute): void {
+  public addRoute<T>(route: IApiRoute<T>): void {
     this.options.routes.push(route);
     this.handleRoute(route);
   }
 
-  /*public addRoutesFromDirectory(routesDirectoryPath = __dirname + '/routes'): void {
-    directoryRoutes()
-  }*/
+  /**
+   * Adds all routes under a directory.
+   * @param routesDirectoryPath Absolute path to the routes directory.
+   */
+  public async addRoutesFromDirectory(
+    routesDirectoryPath = __dirname + "/routes"
+  ): Promise<void> {
+    const routes = await directoryRoutes(routesDirectoryPath);
+    routes.forEach(route => {
+      const [path, routeExport] = route;
+      // Check if export structure is correct.
+      if (!instanceOfApiRoute(routeExport)) {
+        this.debug(`${path} does not implement IApiRoute`);
+        throw new Error("Route is not an IApiRoute");
+      }
+      // If it is correct, handle the route.
+      this.handleRoute(routeExport);
+    });
+  }
 }
 
 export { INeistion, Neistion };

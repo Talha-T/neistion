@@ -18,13 +18,6 @@ interface ISandhandsSchema {
 }
 
 /**
- * Defines how a parameter schema should be.
- */
-interface IParametersSchema {
-    [key: string]: ISandhandsSchema
-}
-
-/**
  * Represents a class with message and status.
  */
 interface IStatusMessagePair {
@@ -41,11 +34,11 @@ interface IStatusMessagePair {
 /**
  * Defines an api call and its properties
  */
-interface IApiRoute {
+interface IApiRoute<T> {
     /**
      * The function called when verified succesfully.
      */
-    call: <PT>(parameters: PT) => Promise<any> | any;
+    call: (parameters: T) => Promise<any> | any;
     /**
      * The http method for this api.
      */
@@ -65,8 +58,9 @@ interface IApiRoute {
     route: string,
     /**
      * The optional verify function.
+     * Ran **after** parameter validation.
      */
-    verify?: (headers: IncomingHttpHeaders, parameters: IncomingParameters) =>
+    verify?: (headers: IncomingHttpHeaders, parameters: T) =>
         Promise<boolean> | boolean | Promise<IStatusMessagePair> | IStatusMessagePair;
     /**
      * The optional verify function, but with a callback instead.
@@ -111,7 +105,7 @@ interface NeistionOptions {
     /**
      * List of api methods and commands for this route. 
      */
-    routes: IApiRoute[],
+    routes: IApiRoute<any>[],
     /**
      * Whether debugging should be made or not.
      */
