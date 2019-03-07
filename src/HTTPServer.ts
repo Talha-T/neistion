@@ -42,7 +42,18 @@ class HTTPServer {
     }
   }
   createUniversalHandler(inputHandler): Function {
+    return (req: Object, res: Object) => {
+      return inputHandler(new UniversalRequest(this.type, req), new UniversalResponse(this.type, res))
+    }
+  }
+}
 
+class UniversalRequest {
+  appType: string;
+  request: Object;
+  constructor(appType: string, request: Object) {
+    this.appType = appType
+    this.request = request
   }
 }
 
