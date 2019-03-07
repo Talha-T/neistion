@@ -57,4 +57,31 @@ class UniversalRequest {
   }
 }
 
+class UniversalResponse {
+  appType: string;
+  response: Object;
+  constructor(appType: string, response: Object) {
+    this.appType = appType
+    this.response = response
+  }
+  status(statusCode: number) {
+    if (this.appType === "express") {
+      this.response.status(statusCode)
+    } else if (this.appType === "fastify") {
+      this.response.code(statusCode)
+    }
+    return this
+  }
+  json(data: Object) {
+    if (this.appType === "express") {
+      this.response.json(data)
+    } else if (this.appType === "fastify") {
+      this.response.send(data)
+    }
+  }
+  send(data: any) {
+    this.response.send(data)
+  }
+}
+
 export default HTTPServer
