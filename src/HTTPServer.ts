@@ -36,24 +36,15 @@ class HTTPServer {
     const handler: Function = args[args.length - 1] as Function;
     if (typeof handler !== 'function') throw new Error("Route handler must be a function.");
     if (path) {
-      this.app[method](path, this.createUniversalHandler(handler));
+      this.app[method](path, this.createUniversalHandler(method, handler));
     } else {
-      this.app[method](this.createUniversalHandler(handler));
+      this.app[method](this.createUniversalHandler(method, handler));
     }
   }
-  createUniversalHandler(inputHandler): Function {
+  createUniversalHandler(method: string, inputHandler: Function): Function {
     return (req: Object, res: Object) => {
-      return inputHandler(new UniversalRequest(this.type, req), new UniversalResponse(this.type, res))
+      return inputHandler(req, new UniversalResponse(this.type, res))
     }
-  }
-}
-
-class UniversalRequest {
-  appType: string;
-  request: Object;
-  constructor(appType: string, request: Object) {
-    this.appType = appType
-    this.request = request
   }
 }
 
