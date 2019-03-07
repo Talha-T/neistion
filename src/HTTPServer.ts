@@ -17,12 +17,33 @@ try {
   }
 }
 
+const allowedMethods: Array<string> = [ "DELETE", "GET", "HEAD", "PATCH", "POST", "PUT", "OPTIONS" ]
+
 class HTTPServer {
+  type: string;
+  app: Object;
   constructor(serverType: string) {
-    if (!["express", "fastify"].includes(serverType)) throw new Error("Invalid Server Type")
-    this.type: string = serverType
+    if (!["express", "fastify"].includes(serverType)) throw new Error("Invalid Server Type");
+    this.type = serverType;
+    this.app = require(this.type)();
   }
-  declareRoute(method)
+  declareRoute(...args: any[]) {
+    if (args.length < 2) throw new Error("Missing Arguments");
+    if (args.length > 3) throw new Error("Too Many Arguments");
+    const method: string = args[0] as string;
+    if (!allowedMethods.includes(method)) throw new Error(`Invalid HTTP Method "${method}"`);
+    const path: string = args.length > 2 && typeof args[1] === "string" ? args[1] : "";
+    const handler: Function = args[args.length - 1] as Function;
+    if (typeof handler !== 'function') throw new Error("Route handler must be a function.");
+    if (path) {
+      this.app[method](path, this.createUniversalHandler(handler));
+    } else {
+      this.app[method](this.createUniversalHandler(handler));
+    }
+  }
+  createUniversalHandler(inputHandler): Function {
+
+  }
 }
 
 export default HTTPServer
