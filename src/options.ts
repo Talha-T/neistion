@@ -101,7 +101,7 @@ interface IncomingParameters {
 /**
  * Defines the main Apifier class.
  */
-interface NeistionOptions {
+interface NeistionOptions<T> {
     /**
      * List of api methods and commands for this route. 
      */
@@ -111,9 +111,9 @@ interface NeistionOptions {
      */
     debug?: boolean;
     /**
-     * Custom codes for you to run with express.
+     * Custom codes for you to run after init.
      */
-    express?: (express: Express) => Promise<void>;
+    afterInit?: <T>(app: T) => Promise<void>;
     /**
      * If set to true, returned resultts are automatically converted to json.
      * True by default.
