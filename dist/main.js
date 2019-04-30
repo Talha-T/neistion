@@ -12,103 +12,25 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const decorator_1 = require("./decorator");
-const express_1 = __importDefault(require("express"));
 const utils_1 = require("./utils");
-const body_parser_1 = __importDefault(require("body-parser"));
-const sandhands_1 = require("sandhands");
+const directory_routes_1 = __importDefault(require("directory-routes"));
 /**
  * The main class for Neistion.
  */
 class Neistion {
     /**
      * Constructs Neistion Object.
-     * @param options The required options, includes api calls too.
+     * @param options The required options, includes api routes too.
      * @param autoSetup Set as false, if you don't want to setup API on constructor.
      */
-    constructor(options = { calls: [] }, autoSetup = true) {
-        this.handleRequest = (apiCall, expressMethod) => {
-            const routeMiddlewares = apiCall.perRouteMiddlewares || [];
-            const sandhandsOptions = {
-                strict: this.options.strictPropertyCheck || false
-            };
-            expressMethod(apiCall.route, ...routeMiddlewares, (req, res) => __awaiter(this, void 0, void 0, function* () {
-                this.debug("A call to: " + apiCall.route);
-                // Sends the result, if ran succesfully.
-                // Otherwise, returns status code 500 (Internal Server Error).
-                try {
-                    // Get parameters considering method.
-                    const parameters = apiCall.method === "GET" ? req.query
-                        : req.body;
-                    const schema = typeof (apiCall.parametersSchema) === "string"
-                        ? decorator_1.getSandhandsSchema(apiCall.parametersSchema) : apiCall.parametersSchema;
-                    // Check parameter types
-                    if (!sandhands_1.valid(parameters, schema, sandhandsOptions)) {
-                        // Send 400 error with missing parameters.
-                        this.debug("Parameters not valid!");
-                        const errors = sandhands_1.details(parameters, schema, sandhandsOptions);
-                        return res.status(400).send(this.options.json ? JSON.stringify(errors) : errors);
-                    }
-                    // Run verify function.
-                    if (apiCall.verify) {
-                        this.debug("Verifying..");
-                        if (!(yield apiCall.verify(req.headers, parameters))) {
-                            // If not verified, return unauthorized.
-                            return res.status(401).send("Unauthorized");
-                        }
-                    }
-                    // Stuff here is complicated because of callbacks..
-                    const shouldContinue = yield (new Promise((resolve, reject) => {
-                        if (typeof (apiCall.verifyCallback) === "function") {
-                            this.debug("Verifying..");
-                            apiCall.verifyCallback(req.headers, parameters, (result) => {
-                                if (typeof (result) == "boolean") {
-                                    if (!result) {
-                                        res.status(401).send("Unauthorized");
-                                        return resolve(false);
-                                    }
-                                    return resolve(true);
-                                }
-                                else {
-                                    res.status(result.status).send(JSON.stringify(result.message));
-                                    return resolve(false);
-                                }
-                            });
-                        }
-                        else {
-                            resolve(true);
-                        }
-                    }));
-                    if (!shouldContinue) {
-                        return;
-                    }
-                    // Run the API call.
-                    const result = yield apiCall.call(parameters);
-                    // Convert to json, if wanted.
-                    if (this.options.json) {
-                        res.send(JSON.stringify(result));
-                    }
-                    else {
-                        res.send(result);
-                    }
-                    this.debug("Call successful!");
-                }
-                catch (err) {
-                    console.log("Caught error: ");
-                    console.log(err);
-                    res.status(500).send("Internal Server Error");
-                }
-            }));
-        };
+    constructor(app, options = { routes: [], json: true }, autoSetup = true) {
         /**
          * Gets sandhands schema from Typescript class.
          * You need to put @sandhandsProp decorator for every property.
          */
         this.getSandhandsSchema = decorator_1.getSandhandsSchema;
         this.options = options;
-        // Set json option to true by default.
-        if (this.options.json === undefined) {
-            this.options.json = true;
-        }
+        this.app = app;
         if (autoSetup) {
             this.setup();
         }
@@ -118,29 +40,30 @@ class Neistion {
             console.log(message);
         }
     }
-    handleCall(call) {
-        // If provided a string, get registered class.
-        if (typeof (call.parametersSchema) === "string") {
-            call.parametersSchema = decorator_1.getSandhandsSchema(call.parametersSchema);
+    send(res, result) {
+        if (this.options.json) {
+            res.send(JSON.stringify(result));
         }
-        this.handleRequest(call, utils_1.getMethodFromMethodEnum(call.method, this.server));
+        else {
+            res.send(String(result));
+        }
+    }
+    handleRoute(route) {
+        // If provided a string, get registered class.
+        if (typeof route.parametersSchema === "string") {
+            route.parametersSchema = decorator_1.getSandhandsSchema(route.parametersSchema);
+        }
+        this.app.register(route);
     }
     /**
      * Sets the server up, but doesn't start it.
      */
     setup() {
         this.debug("Setting up...");
-        // Express is re-setup every time this method is called.
-        this.server = express_1.default();
-        this.debug("Initializing middlewares...");
-        // Initialize body parsing.
-        this.server.use(body_parser_1.default.json({}));
-        this.server.use(body_parser_1.default.urlencoded({
-            extended: false
-        }));
+        this.app.init(this);
         // Loops through all methods and registers them to the express.
-        this.options.calls.forEach((call) => {
-            this.handleCall(call);
+        this.options.routes.forEach(route => {
+            this.app.register(route);
         });
         this.debug("Loaded all routes!");
     }
@@ -151,21 +74,40 @@ class Neistion {
     start(port) {
         return __awaiter(this, void 0, void 0, function* () {
             // Run custom code if present.
-            if (this.options.express) {
-                this.debug("Custom express code present. Running it..");
-                this.options.express(this.server);
+            if (this.options.afterInit) {
+                this.debug("Custom after init code present. Running it..");
+                this.app.afterInit = this.options.afterInit;
             }
-            yield this.server.listen(port);
+            yield this.app.listen(port);
             this.debug("Started server!");
         });
     }
     /**
-     * Adds an API call to the route handlers.
-     * @param call The API Call to add to.
+     * Adds an API route to the route handlers.
+     * @param route The API route to add to.
      */
-    addApiCall(call) {
-        this.options.calls.push(call);
-        this.handleCall(call);
+    addRoute(route) {
+        this.options.routes.push(route);
+        this.handleRoute(route);
+    }
+    /**
+     * Adds all routes under a directory.
+     * @param routesDirectoryPath Absolute path to the routes directory.
+     */
+    addRoutesFromDirectory(routesDirectoryPath = __dirname + "/routes") {
+        return __awaiter(this, void 0, void 0, function* () {
+            const routes = yield directory_routes_1.default(routesDirectoryPath);
+            routes.forEach(route => {
+                const [path, routeExport] = route;
+                // Check if export structure is correct.
+                if (!utils_1.instanceOfApiRoute(routeExport)) {
+                    this.debug(`${path} does not implement IApiRoute`);
+                    throw new Error(`Route ${path} is not an IApiRoute`);
+                }
+                // If it is correct, handle the route.
+                this.handleRoute(routeExport);
+            });
+        });
     }
 }
 exports.Neistion = Neistion;

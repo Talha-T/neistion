@@ -15,13 +15,11 @@ function getMethodFromMethodEnum(method, express) {
     return map[method];
 }
 exports.getMethodFromMethodEnum = getMethodFromMethodEnum;
-function getConstructorFromString(typeString) {
-    const map = {
-        Object: Object,
-        Boolean: Boolean,
-        String: String,
-        Number: Number
-    };
-    return map[typeString];
+/**
+ * Checks if object is a correct IApiRoute.
+ * @param object Object to check for.
+ */
+function instanceOfApiRoute(object) {
+    return 'route' in object;
 }
-exports.getConstructorFromString = getConstructorFromString;
+exports.instanceOfApiRoute = instanceOfApiRoute;

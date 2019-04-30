@@ -1,4 +1,4 @@
-import { HttpMethod } from "./options";
+import { HttpMethod, IApiRoute } from "./options";
 import { Express, RequestHandler } from "express";
 /**
  * Returns http methods from enums.
@@ -6,4 +6,8 @@ import { Express, RequestHandler } from "express";
  * @param express The express server
  */
 export declare function getMethodFromMethodEnum(method: HttpMethod, express: Express): ((route: string, ...handlers: RequestHandler[]) => Express) | ((route: string, ...handlers: RequestHandler[]) => Express) | ((route: string, ...handlers: RequestHandler[]) => Express) | ((route: string, ...handlers: RequestHandler[]) => Express);
-export declare function getConstructorFromString(typeString: string): Function;
+/**
+ * Checks if object is a correct IApiRoute.
+ * @param object Object to check for.
+ */
+export declare function instanceOfApiRoute<T>(object: any): object is IApiRoute<T>;

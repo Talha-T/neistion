@@ -1,9 +1,10 @@
 /// <reference types="node" />
-import { Express, RequestHandler } from "express";
+import { RequestHandler } from "express";
 import { IncomingHttpHeaders } from "http";
+import { IApp } from "./proxy/universal";
 /**
  * Represents available http methods.
-*/
+ */
 declare type HttpMethod = "GET" | "POST" | "PUT" | "DELETE";
 declare type VariableType = StringConstructor | BooleanConstructor | NumberConstructor | ObjectConstructor | undefined | null;
 /**
@@ -28,11 +29,11 @@ interface IStatusMessagePair {
 /**
  * Defines an api call and its properties
  */
-interface IApiCall {
+interface IApiRoute<T> {
     /**
      * The function called when verified succesfully.
      */
-    call: <PT>(parameters: PT) => Promise<any> | any;
+    call: (parameters: T) => Promise<any> | any;
     /**
      * The http method for this api.
      */
@@ -52,8 +53,9 @@ interface IApiCall {
     route: string;
     /**
      * The optional verify function.
+     * Ran **after** parameter validation.
      */
-    verify?: (headers: IncomingHttpHeaders, parameters: IncomingParameters) => Promise<boolean> | boolean | Promise<IStatusMessagePair> | IStatusMessagePair;
+    verify?: (headers: IncomingHttpHeaders, parameters: T) => Promise<boolean> | boolean | Promise<IStatusMessagePair> | IStatusMessagePair;
     /**
      * The optional verify function, but with a callback instead.
      */
@@ -68,19 +70,19 @@ interface IncomingParameters {
 /**
  * Defines the main Apifier class.
  */
-interface NeistionOptions {
+interface NeistionOptions<T> {
     /**
      * List of api methods and commands for this route.
      */
-    calls: IApiCall[];
+    routes: IApiRoute<any>[];
     /**
      * Whether debugging should be made or not.
      */
     debug?: boolean;
     /**
-     * Custom codes for you to run with express.
+     * Custom codes for you to run after init.
      */
-    express?: (express: Express) => Promise<void>;
+    afterInit?: <T>(app: T) => Promise<void>;
     /**
      * If set to true, returned resultts are automatically converted to json.
      * True by default.
@@ -90,5 +92,9 @@ interface NeistionOptions {
      * If set to true, parameter objects with extra properties will be an invalid parameter.
      */
     strictPropertyCheck?: boolean;
+    /**
+     * The type of app to be used internally with Neistion.
+     */
+    app?: IApp<T>;
 }
-export { NeistionOptions, ISandhandsSchema, IStatusMessagePair, HttpMethod, IApiCall, IncomingParameters, VariableType };
+export { NeistionOptions, ISandhandsSchema, IStatusMessagePair, HttpMethod, IApiRoute, IncomingParameters, VariableType };

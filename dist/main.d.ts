@@ -1,12 +1,13 @@
-import { NeistionOptions, ISandhandsSchema, IApiCall } from "./options";
+import { NeistionOptions, ISandhandsSchema, IApiRoute } from "./options";
+import { IResponse, IApp } from "./proxy/universal";
 /**
  * Defines what a Neistion should have.
  */
-interface INeistion {
+interface INeistion<T> {
     /**
      * The options for neistion.
      */
-    options: NeistionOptions;
+    options: NeistionOptions<T>;
     /**
      * Returns a sandhands schema for **class name**.
      * You need to apply @sandhandsProp decorator to properties of class.
@@ -24,17 +25,17 @@ interface INeistion {
 /**
  * The main class for Neistion.
  */
-declare class Neistion implements INeistion {
+declare class Neistion<Q> implements INeistion<Q> {
     /**
      * Constructs Neistion Object.
-     * @param options The required options, includes api calls too.
+     * @param options The required options, includes api routes too.
      * @param autoSetup Set as false, if you don't want to setup API on constructor.
      */
-    constructor(options?: NeistionOptions, autoSetup?: boolean);
-    private server;
-    private handleRequest;
-    private debug;
-    private handleCall;
+    constructor(app: IApp<Q>, options?: NeistionOptions<Q>, autoSetup?: boolean);
+    private app;
+    debug(message: string): void;
+    send(res: IResponse, result: any): void;
+    private handleRoute;
     /**
      * Gets sandhands schema from Typescript class.
      * You need to put @sandhandsProp decorator for every property.
@@ -43,7 +44,7 @@ declare class Neistion implements INeistion {
     /**
      * The current options.
      */
-    readonly options: NeistionOptions;
+    readonly options: NeistionOptions<Q>;
     /**
      * Sets the server up, but doesn't start it.
      */
@@ -52,11 +53,16 @@ declare class Neistion implements INeistion {
      * Starts the setup server.
      * @param port Port to listen to.
      */
-    start(port: Number): Promise<void>;
+    start(port: number): Promise<void>;
     /**
-     * Adds an API call to the route handlers.
-     * @param call The API Call to add to.
+     * Adds an API route to the route handlers.
+     * @param route The API route to add to.
      */
-    addApiCall(call: IApiCall): void;
+    addRoute<T>(route: IApiRoute<T>): void;
+    /**
+     * Adds all routes under a directory.
+     * @param routesDirectoryPath Absolute path to the routes directory.
+     */
+    addRoutesFromDirectory(routesDirectoryPath?: string): Promise<void>;
 }
 export { INeistion, Neistion };
