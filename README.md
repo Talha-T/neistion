@@ -43,7 +43,7 @@ class RandomParameters {
   public max!: number;
 }
 
-cconst api = new Neistion(new ExpressApp(), {
+const api = new Neistion(new ExpressApp(), {
   routes: [
     {
       route: "/random",
@@ -73,12 +73,12 @@ api.start(3000);
 
 Returns the main Neistion object, which empowers the API.
 
-#### app: IApp<T>
+### app: IApp<T>
     This is the proxy between Neistion and your framework. Change this to change what framework is used in your API. You can easily implement your own proxy, check `src/proxy/` for that.
 
     Currently, available options are `ExpressApp` and ~~`FastifyApp`~~
 
-#### options: NeistionOptions
+### options: NeistionOptions
 
 - #### routes: [IApiRoute](#iapiroute)[]
   This is where you define your **api calls** within options, so this should be defined even if it should be empty.
