@@ -60,6 +60,10 @@ class Neistion {
      */
     setup() {
         this.debug("Setting up...");
+        if (this.options.afterInit) {
+            this.debug("Custom after init code present. Running it..");
+            this.app.afterInit = this.options.afterInit;
+        }
         this.app.init(this);
         // Loops through all methods and registers them to the express.
         this.options.routes.forEach(route => {
@@ -74,10 +78,6 @@ class Neistion {
     start(port) {
         return __awaiter(this, void 0, void 0, function* () {
             // Run custom code if present.
-            if (this.options.afterInit) {
-                this.debug("Custom after init code present. Running it..");
-                this.app.afterInit = this.options.afterInit;
-            }
             yield this.app.listen(port);
             this.debug("Started server!");
         });
