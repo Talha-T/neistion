@@ -92,6 +92,10 @@ class Neistion<Q> implements INeistion<Q> {
   public setup(): void {
     this.debug("Setting up...");
 
+    if (this.options.afterInit) {
+      this.debug("Custom after init code present. Running it..");
+      this.app.afterInit = this.options.afterInit;
+    }
     this.app.init(this);
 
     // Loops through all methods and registers them to the express.
@@ -107,10 +111,6 @@ class Neistion<Q> implements INeistion<Q> {
    */
   public async start(port: number): Promise<void> {
     // Run custom code if present.
-    if (this.options.afterInit) {
-      this.debug("Custom after init code present. Running it..");
-      this.app.afterInit = this.options.afterInit;
-    }
     await this.app.listen(port);
     this.debug("Started server!");
   }

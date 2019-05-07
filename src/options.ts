@@ -127,7 +127,7 @@ interface NeistionOptions<T> {
   /**
    * Custom codes for you to run after init.
    */
-  afterInit?: <T>(app: T) => Promise<void>;
+  afterInit?: (app: T) => Promise<void>;
   /**
    * If set to true, returned resultts are automatically converted to json.
    * True by default.
