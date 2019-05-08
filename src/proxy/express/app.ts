@@ -111,7 +111,10 @@ export class ExpressApp implements IApp<Express> {
           return;
         }
         // Call the API route.
-        const result = await route.call(parameters, route.getParamaters);
+        const result = await route.call(
+          parameters,
+          (route.getParamaters || (() => undefined))(req)
+        );
         // Convert to json, if wanted.
         this.neistion.send(res, result);
         this.neistion.debug("Call successful!");
