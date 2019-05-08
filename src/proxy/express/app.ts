@@ -111,7 +111,7 @@ export class ExpressApp implements IApp<Express> {
           return;
         }
         // Call the API route.
-        const result = await route.call(parameters);
+        const result = await route.call(parameters, route.getParamaters);
         // Convert to json, if wanted.
         this.neistion.send(res, result);
         this.neistion.debug("Call successful!");
@@ -121,7 +121,5 @@ export class ExpressApp implements IApp<Express> {
         res.status(500).send("Internal Server Error");
       }
     });
-
-
   }
 }

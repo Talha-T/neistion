@@ -1,5 +1,5 @@
 /// <reference types="node" />
-import { RequestHandler } from "express";
+import { RequestHandler, Request } from "express";
 import { IncomingHttpHeaders } from "http";
 import { IApp } from "./proxy/universal";
 /**
@@ -33,7 +33,11 @@ interface IApiRoute<T> {
     /**
      * The function called when verified succesfully.
      */
-    call: (parameters: T) => Promise<any> | any;
+    call: (parameters: T, arg?: any) => Promise<any> | any;
+    /**
+     * Gets parameters from the request object.
+     */
+    getParamaters?: (req: Request) => any;
     /**
      * The http method for this api.
      */
