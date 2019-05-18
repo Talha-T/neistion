@@ -20,7 +20,7 @@ function sandhandsProp(target, key) {
         Object: Object
     };
     // Set schema object's key to type.
-    schemas[schemaKey][key] = typeStringToConstructor[type];
+    schemas[schemaKey][key] = typeStringToConstructor[type] || type;
 }
 exports.sandhandsProp = sandhandsProp;
 /**

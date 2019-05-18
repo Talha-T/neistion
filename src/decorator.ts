@@ -5,7 +5,7 @@ import "reflect-metadata";
 
 // Available types for sandhands.
 type VariableType = StringConstructor | BooleanConstructor | NumberConstructor
-    | ObjectConstructor | undefined | null;
+    | ObjectConstructor | undefined | null | any;
 
 /**
  * Defines how a sandhands schema should be.
@@ -42,7 +42,7 @@ function sandhandsProp(target: any, key: string) {
     }
 
     // Set schema object's key to type.
-    schemas[schemaKey][key] = typeStringToConstructor[type];
+    schemas[schemaKey][key] = typeStringToConstructor[type] || type;
 }
 
 /**

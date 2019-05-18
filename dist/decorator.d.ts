@@ -1,5 +1,5 @@
 import "reflect-metadata";
-declare type VariableType = StringConstructor | BooleanConstructor | NumberConstructor | ObjectConstructor | undefined | null;
+declare type VariableType = StringConstructor | BooleanConstructor | NumberConstructor | ObjectConstructor | undefined | null | any;
 /**
  * Defines how a sandhands schema should be.
  */
