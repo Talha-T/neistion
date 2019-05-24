@@ -10,9 +10,10 @@ interface ISandhandsSchema {
  * Apply this decorator to export this property to a sandhands object.
  */
 declare function sandhandsProp(target: any, key: string): void;
+declare function optionalSandhandsProp(target: any, key: string): void;
 /**
  * Returns the sandhands schema with **class name**.
  * @param key The class name of the schema generated.
  */
 declare function getSandhandsSchema(key: string): ISandhandsSchema;
-export { sandhandsProp, getSandhandsSchema, ISandhandsSchema, VariableType };
+export { sandhandsProp, optionalSandhandsProp, getSandhandsSchema, ISandhandsSchema, VariableType };

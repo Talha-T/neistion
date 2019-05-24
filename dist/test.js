@@ -8,20 +8,12 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const index_1 = require("./index");
 class RandomParameters {
 }
 __decorate([
-    index_1.sandhandsProp,
+    index_1.optionalSandhandsProp,
     __metadata("design:type", Number)
 ], RandomParameters.prototype, "min", void 0);
 __decorate([
@@ -33,23 +25,18 @@ const api = new index_1.Neistion(new index_1.ExpressApp(), {
         {
             route: "/random",
             method: "GET",
-            parametersSchema: "RandomParameters",
+            parametersSchema: RandomParameters.name,
             call(parameters) {
-                const { max, min } = parameters;
+                const { max } = parameters;
+                const min = parameters.min || 0;
                 return Math.floor(Math.random() * (max - min)) + min;
             },
             verify(headers, parameters) {
-                return parameters.max > parameters.min;
+                return parameters.max > (parameters.min || 0);
             }
         }
     ],
     debug: true,
     strictPropertyCheck: true,
-    afterInit(app) {
-        return __awaiter(this, void 0, void 0, function* () {
-            console.log(app);
-            console.log("called");
-        });
-    },
 });
 api.start(3000);
