@@ -1,10 +1,12 @@
+import { ParameterTypes } from './definitions';
 import { ExpressApp } from "./proxy/express/app";
 import { Neistion } from "./main";
 import { HttpMethod, IApiRoute } from "./options";
 import {
   getSandhandsSchema,
   optionalSandhandsProp,
-  sandhandsProp
+  sandhandsProp,
+  customizedSandhandsProp
 } from "./decorator";
 
 export {
@@ -13,6 +15,8 @@ export {
   getSandhandsSchema,
   sandhandsProp,
   optionalSandhandsProp,
+  customizedSandhandsProp,
+  ParameterTypes,
   ExpressApp,
   IApiRoute
 };

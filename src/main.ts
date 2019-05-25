@@ -4,7 +4,7 @@ import {
   ISandhandsSchema,
   IApiRoute,
 } from "./options";
-import { getMethodFromMethodEnum, instanceOfApiRoute } from "./utils";
+import { instanceOfApiRoute } from "./utils";
 import directoryRoutes from "directory-routes";
 import { IResponse, IApp } from "./proxy/universal";
 

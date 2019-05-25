@@ -1,4 +1,5 @@
 import "reflect-metadata";
+import { ParameterTypes } from "./definitions";
 
 // Redefining types here, as I don't want this file to require other files,
 // so we get a better performance.
@@ -62,6 +63,21 @@ function optionalSandhandsProp(target: any, key: string) {
   schemas[schemaKey][key] = {
     _: typeStringToConstructor[type],
     optional: true
+  };
+}
+
+export function customizedSandhandsProp(options: ParameterTypes) {
+  return function(target: any, key: string) {
+    const schemaKey = target.constructor.name;
+    const type = Reflect.getMetadata("design:type", target, key).name;
+    if (!schemas[schemaKey]) {
+      schemas[schemaKey] = {};
+    }
+
+    schemas[schemaKey][key] = {
+      _: typeStringToConstructor[type],
+      ...options
+    };
   };
 }
 

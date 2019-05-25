@@ -56,7 +56,12 @@ export class ExpressApp implements IApp<Express> {
         Object.keys(schema).forEach(key => {
           // Avoid errors
           if (parameters[key]) {
-            parameters[key] = schema[key](parameters[key]);
+            if (typeof schema[key] == "function") {
+              parameters[key] = schema[key](parameters[key]);
+            }
+            else {
+              parameters[key] = schema[key]._(parameters[key]);
+            }
           }
         });
 
