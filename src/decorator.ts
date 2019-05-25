@@ -36,7 +36,6 @@ const typeStringToConstructor: { [key: string]: any } = {
   String: String,
   Number: Number,
   Boolean: Boolean,
-  Object: Object
 };
 
 /**
@@ -50,7 +49,7 @@ function sandhandsProp(target: any, key: string) {
   const type = Reflect.getMetadata("design:type", target, key).name;
 
   // Set schema object's key to type.
-  schemas[schemaKey][key] = typeStringToConstructor[type];
+  schemas[schemaKey][key] = typeStringToConstructor[type] || type;
 }
 
 function optionalSandhandsProp(target: any, key: string) {
