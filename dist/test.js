@@ -10,6 +10,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const index_1 = require("./index");
+const decorator_1 = require("./decorator");
 class RandomParameters {
 }
 __decorate([
@@ -20,6 +21,14 @@ __decorate([
     index_1.sandhandsProp,
     __metadata("design:type", Number)
 ], RandomParameters.prototype, "max", void 0);
+__decorate([
+    decorator_1.customizedSandhandsProp({
+        minLength: 4,
+        lowercase: true
+    }),
+    __metadata("design:type", String)
+], RandomParameters.prototype, "password", void 0);
+console.log(index_1.getSandhandsSchema(RandomParameters.name));
 const api = new index_1.Neistion(new index_1.ExpressApp(), {
     routes: [
         {
@@ -37,6 +46,6 @@ const api = new index_1.Neistion(new index_1.ExpressApp(), {
         }
     ],
     debug: true,
-    strictPropertyCheck: true,
+    strictPropertyCheck: true
 });
 api.start(3000);

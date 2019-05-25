@@ -1,4 +1,5 @@
 import "reflect-metadata";
+import { ParameterTypes } from "./definitions";
 declare type VariableType = StringConstructor | BooleanConstructor | NumberConstructor | ObjectConstructor | undefined | null | any;
 /**
  * Defines how a sandhands schema should be.
@@ -11,6 +12,7 @@ interface ISandhandsSchema {
  */
 declare function sandhandsProp(target: any, key: string): void;
 declare function optionalSandhandsProp(target: any, key: string): void;
+export declare function customizedSandhandsProp(options: ParameterTypes): (target: any, key: string) => void;
 /**
  * Returns the sandhands schema with **class name**.
  * @param key The class name of the schema generated.

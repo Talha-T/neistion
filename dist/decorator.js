@@ -30,11 +30,22 @@ function optionalSandhandsProp(target, key) {
         schemas[schemaKey] = {};
     }
     schemas[schemaKey][key] = {
-        _: typeStringToConstructor[key],
+        _: typeStringToConstructor[type],
         optional: true
     };
 }
 exports.optionalSandhandsProp = optionalSandhandsProp;
+function customizedSandhandsProp(options) {
+    return function (target, key) {
+        const schemaKey = target.constructor.name;
+        const type = Reflect.getMetadata("design:type", target, key).name;
+        if (!schemas[schemaKey]) {
+            schemas[schemaKey] = {};
+        }
+        schemas[schemaKey][key] = Object.assign({ _: typeStringToConstructor[type] }, options);
+    };
+}
+exports.customizedSandhandsProp = customizedSandhandsProp;
 /**
  * Returns the sandhands schema with **class name**.
  * @param key The class name of the schema generated.
