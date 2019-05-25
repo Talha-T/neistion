@@ -60,7 +60,7 @@ function optionalSandhandsProp(target: any, key: string) {
   }
 
   schemas[schemaKey][key] = {
-    _: typeStringToConstructor[key],
+    _: typeStringToConstructor[type],
     optional: true
   };
 }
