@@ -8,7 +8,6 @@ const typeStringToConstructor = {
     String: String,
     Number: Number,
     Boolean: Boolean,
-    Object: Object
 };
 /**
  * Apply this decorator to export this property to a sandhands object.
@@ -20,7 +19,7 @@ function sandhandsProp(target, key) {
     }
     const type = Reflect.getMetadata("design:type", target, key).name;
     // Set schema object's key to type.
-    schemas[schemaKey][key] = typeStringToConstructor[type];
+    schemas[schemaKey][key] = typeStringToConstructor[type] || type;
 }
 exports.sandhandsProp = sandhandsProp;
 function optionalSandhandsProp(target, key) {
