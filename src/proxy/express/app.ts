@@ -86,10 +86,8 @@ export class ExpressApp implements IApp<Express> {
             }
           } else {
             res.status(result.status).send(JSON.stringify(result.message));
-            if (result.status < 400) {
-              this.neistion.debug("Not verified!");
-              return;
-            } // 4xx and 5xx are error codes.
+            this.neistion.debug("Not verified!");
+            return;
           }
         }
 
