@@ -58,8 +58,7 @@ export class ExpressApp implements IApp<Express> {
           if (parameters[key]) {
             if (typeof schema[key] == "function") {
               parameters[key] = schema[key](parameters[key]);
-            }
-            else {
+            } else {
               parameters[key] = schema[key]._(parameters[key]);
             }
           }
@@ -78,10 +77,19 @@ export class ExpressApp implements IApp<Express> {
         // Run verify function.
         if (route.verify) {
           this.neistion.debug("Verifying..");
-          if (!(await route.verify(req.headers, parameters))) {
-            // If not verified, return unauthorized.
-            this.neistion.debug("Not verified!");
-            return res.status(401).send("Unauthorized");
+          const result = await route.verify(req.headers, parameters);
+          if (typeof result == "boolean") {
+            if (!result) {
+              this.neistion.debug("Not verified!");
+              res.status(401).send("Unauthorized");
+              return;
+            }
+          } else {
+            res.status(result.status).send(JSON.stringify(result.message));
+            if (result.status < 400) {
+              this.neistion.debug("Not verified!");
+              return;
+            } // 4xx and 5xx are error codes.
           }
         }
 
@@ -95,6 +103,7 @@ export class ExpressApp implements IApp<Express> {
               (result: boolean | IStatusMessagePair) => {
                 if (typeof result == "boolean") {
                   if (!result) {
+                    this.neistion.debug("Not verified!");
                     res.status(401).send("Unauthorized");
                     return resolve(false);
                   }
@@ -103,6 +112,7 @@ export class ExpressApp implements IApp<Express> {
                   res
                     .status(result.status)
                     .send(JSON.stringify(result.message));
+                  this.neistion.debug("Not verified!");
                   return resolve(result.status < 400); // 4xx and 5xx are error codes.
                 }
               }

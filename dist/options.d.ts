@@ -59,7 +59,7 @@ interface IApiRoute<T> {
      * The optional verify function.
      * Ran **after** parameter validation.
      */
-    verify?: (headers: IncomingHttpHeaders, parameters: T) => Promise<boolean> | boolean | Promise<IStatusMessagePair> | IStatusMessagePair;
+    verify?: (headers: IncomingHttpHeaders, parameters: T) => Promise<boolean> | boolean | Promise<IStatusMessagePair> | IStatusMessagePair | Promise<IStatusMessagePair | boolean> | IStatusMessagePair | boolean;
     /**
      * The optional verify function, but with a callback instead.
      */

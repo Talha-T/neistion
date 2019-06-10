@@ -77,7 +77,10 @@ interface IApiRoute<T> {
     | Promise<boolean>
     | boolean
     | Promise<IStatusMessagePair>
-    | IStatusMessagePair;
+    | IStatusMessagePair
+    | Promise<IStatusMessagePair | boolean>
+    | IStatusMessagePair
+    | boolean;
   /**
    * The optional verify function, but with a callback instead.
    */
