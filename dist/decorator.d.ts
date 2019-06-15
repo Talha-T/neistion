@@ -7,6 +7,7 @@ declare type VariableType = StringConstructor | BooleanConstructor | NumberConst
 interface ISandhandsSchema {
     [key: string]: VariableType;
 }
+export declare function extend(schemaName: string): (constructor: Function) => void;
 /**
  * Apply this decorator to export this property to a sandhands object.
  */

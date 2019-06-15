@@ -73,6 +73,7 @@ class ExpressApp {
                         .status(400)
                         .send(this.neistion.options.json ? JSON.stringify(errors) : errors);
                 }
+                let verified = true;
                 // Run verify function.
                 if (route.verify) {
                     this.neistion.debug("Verifying..");
@@ -81,15 +82,19 @@ class ExpressApp {
                         if (!result) {
                             this.neistion.debug("Not verified!");
                             res.status(401).send("Unauthorized");
+                            verified = false;
                             return;
                         }
                     }
                     else {
                         res.status(result.status).send(JSON.stringify(result.message));
                         this.neistion.debug("Not verified!");
+                        verified = false;
                         return;
                     }
                 }
+                if (!verified)
+                    return;
                 // Stuff here is complicated because of callbacks..
                 const shouldContinue = yield new Promise((resolve, reject) => {
                     if (typeof route.verifyCallback === "function") {

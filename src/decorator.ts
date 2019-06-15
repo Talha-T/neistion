@@ -35,8 +35,19 @@ const schemas: ISchemas = {};
 const typeStringToConstructor: { [key: string]: any } = {
   String: String,
   Number: Number,
-  Boolean: Boolean,
+  Boolean: Boolean
 };
+
+export function extend(schemaName: string) {
+  return function(constructor: Function) {
+    const baseSchema = getSandhandsSchema(schemaName);
+    let newSchema = getSandhandsSchema(constructor.name);
+    Object.keys(baseSchema).forEach(key => {
+      newSchema[key] = baseSchema[key];
+    });
+    schemas[constructor.name] = newSchema;
+  };
+}
 
 /**
  * Apply this decorator to export this property to a sandhands object.
