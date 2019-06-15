@@ -9,3 +9,4 @@ exports.getSandhandsSchema = decorator_1.getSandhandsSchema;
 exports.optionalSandhandsProp = decorator_1.optionalSandhandsProp;
 exports.sandhandsProp = decorator_1.sandhandsProp;
 exports.customizedSandhandsProp = decorator_1.customizedSandhandsProp;
+exports.extend = decorator_1.extend;
