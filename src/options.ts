@@ -148,6 +148,10 @@ interface NeistionOptions<T> {
    * The type of app to be used internally with Neistion.
    */
   app?: IApp<T>;
+  /**
+   * Maximum body size for incoming requests.
+   */
+  bodyLimit?: string;
 }
 
 export {
