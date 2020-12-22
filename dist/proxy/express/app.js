@@ -22,18 +22,23 @@ class ExpressApp {
     }
     init(neistion) {
         this.app.use(bodyParser.json({
-            limit: neistion.options.bodyLimit
+            limit: neistion.options.bodyLimit,
         }));
         this.app.use(bodyParser.urlencoded({
-            extended: false
+            extended: false,
         }));
         this.neistion = neistion;
         // If custom afterInit is present, run it.
         if (this.afterInit)
             this.afterInit(this.app);
     }
-    listen(port) {
-        this.app.listen(port);
+    listen(port, ip) {
+        if (ip !== undefined) {
+            this.app.listen(port, ip);
+        }
+        else {
+            this.app.listen(port);
+        }
     }
     register(route) {
         if (typeof route.parametersSchema === "string") {
@@ -42,7 +47,7 @@ class ExpressApp {
         const expressMethod = utils_1.getMethodFromMethodEnum(route.method, this.app);
         const routeMiddlewares = route.perRouteMiddlewares || [];
         const sandhandsOptions = {
-            strict: this.neistion.options.strictPropertyCheck || false
+            strict: this.neistion.options.strictPropertyCheck || false,
         };
         expressMethod(route.route, ...routeMiddlewares, (req, res) => __awaiter(this, void 0, void 0, function* () {
             this.neistion.debug("A call to: " + route.route);
@@ -55,7 +60,7 @@ class ExpressApp {
                     ? decorator_1.getSandhandsSchema(route.parametersSchema)
                     : route.parametersSchema;
                 // Converts parameters to correct type according to schema
-                Object.keys(schema).forEach(key => {
+                Object.keys(schema).forEach((key) => {
                     // Avoid errors
                     if (parameters[key]) {
                         if (typeof schema[key] == "function") {

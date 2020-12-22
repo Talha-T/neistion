@@ -7,6 +7,6 @@ export declare class ExpressApp implements IApp<Express> {
     private neistion;
     afterInit?: ((app: Express) => void) | undefined;
     init(neistion: Neistion<Express>): void;
-    listen(port: number): void;
+    listen(port: number, ip?: string): void;
     register<K>(route: IApiRoute<K>): void;
 }

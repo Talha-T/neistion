@@ -12,12 +12,14 @@ export class ExpressApp implements IApp<Express> {
   private neistion!: Neistion<Express>;
   afterInit?: ((app: Express) => void) | undefined;
   init(neistion: Neistion<Express>) {
-    this.app.use(bodyParser.json({
-      limit: neistion.options.bodyLimit
-    }));
+    this.app.use(
+      bodyParser.json({
+        limit: neistion.options.bodyLimit,
+      })
+    );
     this.app.use(
       bodyParser.urlencoded({
-        extended: false
+        extended: false,
       })
     );
 
@@ -26,8 +28,12 @@ export class ExpressApp implements IApp<Express> {
     // If custom afterInit is present, run it.
     if (this.afterInit) this.afterInit(this.app);
   }
-  listen(port: number) {
-    this.app.listen(port);
+  listen(port: number, ip?: string) {
+    if (ip !== undefined) {
+      this.app.listen(port, ip);
+    } else {
+      this.app.listen(port);
+    }
   }
   register<K>(route: IApiRoute<K>) {
     if (typeof route.parametersSchema === "string") {
@@ -38,7 +44,7 @@ export class ExpressApp implements IApp<Express> {
 
     const routeMiddlewares = route.perRouteMiddlewares || [];
     const sandhandsOptions = {
-      strict: this.neistion.options.strictPropertyCheck || false
+      strict: this.neistion.options.strictPropertyCheck || false,
     };
     expressMethod(route.route, ...routeMiddlewares, async (req, res) => {
       this.neistion.debug("A call to: " + route.route);
@@ -55,7 +61,7 @@ export class ExpressApp implements IApp<Express> {
             : route.parametersSchema;
 
         // Converts parameters to correct type according to schema
-        Object.keys(schema).forEach(key => {
+        Object.keys(schema).forEach((key) => {
           // Avoid errors
           if (parameters[key]) {
             if (typeof schema[key] == "function") {

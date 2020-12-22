@@ -32,7 +32,7 @@ interface INeistion<T> {
   /**
    * Starts the setup API.
    */
-  start: (port: number) => Promise<void>;
+  start: (port: number, ip?: string) => Promise<void>;
 }
 
 /**
@@ -108,10 +108,11 @@ class Neistion<Q> implements INeistion<Q> {
   /**
    * Starts the setup server.
    * @param port Port to listen to.
+   * @param port IP to listen to.
    */
-  public async start(port: number): Promise<void> {
+  public async start(port: number, ip?: string): Promise<void> {
     // Run custom code if present.
-    await this.app.listen(port);
+    await this.app.listen(port, ip);
     this.debug("Started server!");
   }
 

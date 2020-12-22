@@ -15,6 +15,6 @@ export interface IRequest {
 export interface IApp<T> {
   afterInit?: (app: T) => void;
   init: (neistion: Neistion<T>) => void;
-  listen: (port: number) => void;
+  listen: (port: number, ip?: string) => void;
   register: <K>(route: IApiRoute<K>) => void;
 }
