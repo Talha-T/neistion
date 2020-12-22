@@ -74,11 +74,12 @@ class Neistion {
     /**
      * Starts the setup server.
      * @param port Port to listen to.
+     * @param port IP to listen to.
      */
-    start(port) {
+    start(port, ip) {
         return __awaiter(this, void 0, void 0, function* () {
             // Run custom code if present.
-            yield this.app.listen(port);
+            yield this.app.listen(port, ip);
             this.debug("Started server!");
         });
     }

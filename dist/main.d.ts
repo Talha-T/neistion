@@ -20,7 +20,7 @@ interface INeistion<T> {
     /**
      * Starts the setup API.
      */
-    start: (port: number) => Promise<void>;
+    start: (port: number, ip?: string) => Promise<void>;
 }
 /**
  * The main class for Neistion.
@@ -52,8 +52,9 @@ declare class Neistion<Q> implements INeistion<Q> {
     /**
      * Starts the setup server.
      * @param port Port to listen to.
+     * @param port IP to listen to.
      */
-    start(port: number): Promise<void>;
+    start(port: number, ip?: string): Promise<void>;
     /**
      * Adds an API route to the route handlers.
      * @param route The API route to add to.
