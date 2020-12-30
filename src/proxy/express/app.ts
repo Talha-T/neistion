@@ -66,6 +66,12 @@ export class ExpressApp implements IApp<Express> {
           if (parameters[key]) {
             if (typeof schema[key] == "function") {
               parameters[key] = schema[key](parameters[key]);
+            } else if (Array.isArray(schema[key])) {
+              const oldParameters = parameters[key];
+              parameters[key] = [];
+              oldParameters.forEach((x: any) =>
+                parameters[key].push(schema[key][0](x))
+              );
             } else {
               parameters[key] = schema[key]._(parameters[key]);
             }
