@@ -1,9 +1,5 @@
 import { getSandhandsSchema } from "./decorator";
-import {
-  NeistionOptions,
-  ISandhandsSchema,
-  IApiRoute,
-} from "./options";
+import { NeistionOptions, ISandhandsSchema, IApiRoute } from "./options";
 import { instanceOfApiRoute } from "./utils";
 import directoryRoutes from "directory-routes";
 import { IResponse, IApp } from "./proxy/universal";
@@ -46,7 +42,7 @@ class Neistion<Q> implements INeistion<Q> {
    */
   constructor(
     app: IApp<Q>,
-    options: NeistionOptions<Q> = { routes: [], json: true },
+    options: NeistionOptions<Q> = { routes: [], json: true, secure: false },
     autoSetup = true
   ) {
     this.options = options;
@@ -99,7 +95,7 @@ class Neistion<Q> implements INeistion<Q> {
     this.app.init(this);
 
     // Loops through all methods and registers them to the express.
-    this.options.routes.forEach(route => {
+    this.options.routes.forEach((route) => {
       this.app.register(route);
     });
 
@@ -133,7 +129,7 @@ class Neistion<Q> implements INeistion<Q> {
     routesDirectoryPath = __dirname + "/routes"
   ): Promise<void> {
     const routes = await directoryRoutes(routesDirectoryPath);
-    routes.forEach(route => {
+    routes.forEach((route) => {
       const [path, routeExport] = route;
       // Check if export structure is correct.
       if (!instanceOfApiRoute(routeExport)) {

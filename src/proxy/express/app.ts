@@ -6,22 +6,36 @@ import { getSandhandsSchema } from "../../decorator";
 import { getMethodFromMethodEnum } from "../../utils";
 import { Neistion } from "../../main";
 import { valid, details } from "sandhands";
+import https from "https";
+import { readFileSync } from "fs";
 
 export class ExpressApp implements IApp<Express> {
   private app: Express = express();
   private neistion!: Neistion<Express>;
   afterInit?: ((app: Express) => void) | undefined;
   init(neistion: Neistion<Express>) {
-    this.app.use(
-      bodyParser.json({
-        limit: neistion.options.bodyLimit,
-      })
-    );
-    this.app.use(
-      bodyParser.urlencoded({
-        extended: false,
-      })
-    );
+    if (!neistion.options.secure) {
+      this.app.use(
+        bodyParser.json({
+          limit: neistion.options.bodyLimit,
+        })
+      );
+      this.app.use(
+        bodyParser.urlencoded({
+          extended: false,
+        })
+      );
+    } else {
+      const server = https.createServer(
+        {
+          key: readFileSync("server.key"),
+          cert: readFileSync("server.cert"),
+        },
+        this.app
+      );
+
+      server.listen();
+    }
 
     this.neistion = neistion;
 
@@ -29,10 +43,22 @@ export class ExpressApp implements IApp<Express> {
     if (this.afterInit) this.afterInit(this.app);
   }
   listen(port: number, ip?: string) {
-    if (ip !== undefined) {
-      this.app.listen(port, ip);
+    if (!this.neistion.options.secure) {
+      if (ip !== undefined) {
+        this.app.listen(port, ip);
+      } else {
+        this.app.listen(port);
+      }
     } else {
-      this.app.listen(port);
+      const server = https.createServer(
+        {
+          key: readFileSync(this.neistion.options.sslKey!),
+          cert: readFileSync(this.neistion.options.sslCert!),
+        },
+        this.app
+      );
+
+      server.listen(port, ip);
     }
   }
   register<K>(route: IApiRoute<K>) {
