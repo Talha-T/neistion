@@ -14,12 +14,12 @@ export class ExpressApp implements IApp<Express> {
   private neistion!: Neistion<Express>;
   afterInit?: ((app: Express) => void) | undefined;
   init(neistion: Neistion<Express>) {
+    this.app.use(
+      bodyParser.json({
+        limit: neistion.options.bodyLimit,
+      })
+    );
     if (!neistion.options.secure) {
-      this.app.use(
-        bodyParser.json({
-          limit: neistion.options.bodyLimit,
-        })
-      );
       this.app.use(
         bodyParser.urlencoded({
           extended: false,

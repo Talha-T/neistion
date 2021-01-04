@@ -104,5 +104,17 @@ interface NeistionOptions<T> {
      * Maximum body size for incoming requests.
      */
     bodyLimit?: string;
+    /**
+     * To use SSL or not
+     */
+    secure: boolean;
+    /**
+     * Path to the SSL key
+     */
+    sslKey?: string;
+    /**
+     * Path to the SSL certificate
+     */
+    sslCert?: string;
 }
-export { NeistionOptions, ISandhandsSchema, IStatusMessagePair, HttpMethod, IApiRoute, IncomingParameters, VariableType };
+export { NeistionOptions, ISandhandsSchema, IStatusMessagePair, HttpMethod, IApiRoute, IncomingParameters, VariableType, };

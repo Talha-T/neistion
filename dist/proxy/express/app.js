@@ -16,28 +16,48 @@ const bodyParser = require("body-parser");
 const decorator_1 = require("../../decorator");
 const utils_1 = require("../../utils");
 const sandhands_1 = require("sandhands");
+const https_1 = __importDefault(require("https"));
+const fs_1 = require("fs");
 class ExpressApp {
     constructor() {
         this.app = express_1.default();
     }
     init(neistion) {
-        this.app.use(bodyParser.json({
-            limit: neistion.options.bodyLimit,
-        }));
-        this.app.use(bodyParser.urlencoded({
-            extended: false,
-        }));
+        if (!neistion.options.secure) {
+            this.app.use(bodyParser.json({
+                limit: neistion.options.bodyLimit,
+            }));
+            this.app.use(bodyParser.urlencoded({
+                extended: false,
+            }));
+        }
+        else {
+            const server = https_1.default.createServer({
+                key: fs_1.readFileSync("server.key"),
+                cert: fs_1.readFileSync("server.cert"),
+            }, this.app);
+            server.listen();
+        }
         this.neistion = neistion;
         // If custom afterInit is present, run it.
         if (this.afterInit)
             this.afterInit(this.app);
     }
     listen(port, ip) {
-        if (ip !== undefined) {
-            this.app.listen(port, ip);
+        if (!this.neistion.options.secure) {
+            if (ip !== undefined) {
+                this.app.listen(port, ip);
+            }
+            else {
+                this.app.listen(port);
+            }
         }
         else {
-            this.app.listen(port);
+            const server = https_1.default.createServer({
+                key: fs_1.readFileSync(this.neistion.options.sslKey),
+                cert: fs_1.readFileSync(this.neistion.options.sslCert),
+            }, this.app);
+            server.listen(port, ip);
         }
     }
     register(route) {

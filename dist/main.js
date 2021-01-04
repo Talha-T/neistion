@@ -23,7 +23,7 @@ class Neistion {
      * @param options The required options, includes api routes too.
      * @param autoSetup Set as false, if you don't want to setup API on constructor.
      */
-    constructor(app, options = { routes: [], json: true }, autoSetup = true) {
+    constructor(app, options = { routes: [], json: true, secure: false }, autoSetup = true) {
         /**
          * Gets sandhands schema from Typescript class.
          * You need to put @sandhandsProp decorator for every property.
@@ -66,7 +66,7 @@ class Neistion {
         }
         this.app.init(this);
         // Loops through all methods and registers them to the express.
-        this.options.routes.forEach(route => {
+        this.options.routes.forEach((route) => {
             this.app.register(route);
         });
         this.debug("Loaded all routes!");
@@ -98,7 +98,7 @@ class Neistion {
     addRoutesFromDirectory(routesDirectoryPath = __dirname + "/routes") {
         return __awaiter(this, void 0, void 0, function* () {
             const routes = yield directory_routes_1.default(routesDirectoryPath);
-            routes.forEach(route => {
+            routes.forEach((route) => {
                 const [path, routeExport] = route;
                 // Check if export structure is correct.
                 if (!utils_1.instanceOfApiRoute(routeExport)) {
