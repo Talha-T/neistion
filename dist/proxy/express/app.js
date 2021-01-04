@@ -23,10 +23,10 @@ class ExpressApp {
         this.app = express_1.default();
     }
     init(neistion) {
+        this.app.use(bodyParser.json({
+            limit: neistion.options.bodyLimit,
+        }));
         if (!neistion.options.secure) {
-            this.app.use(bodyParser.json({
-                limit: neistion.options.bodyLimit,
-            }));
             this.app.use(bodyParser.urlencoded({
                 extended: false,
             }));
