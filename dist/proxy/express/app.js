@@ -26,18 +26,9 @@ class ExpressApp {
         this.app.use(bodyParser.json({
             limit: neistion.options.bodyLimit,
         }));
-        if (!neistion.options.secure) {
-            this.app.use(bodyParser.urlencoded({
-                extended: false,
-            }));
-        }
-        else {
-            const server = https_1.default.createServer({
-                key: fs_1.readFileSync("server.key"),
-                cert: fs_1.readFileSync("server.cert"),
-            }, this.app);
-            server.listen();
-        }
+        this.app.use(bodyParser.urlencoded({
+            extended: false,
+        }));
         this.neistion = neistion;
         // If custom afterInit is present, run it.
         if (this.afterInit)

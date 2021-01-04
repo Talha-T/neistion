@@ -19,24 +19,11 @@ export class ExpressApp implements IApp<Express> {
         limit: neistion.options.bodyLimit,
       })
     );
-    if (!neistion.options.secure) {
-      this.app.use(
-        bodyParser.urlencoded({
-          extended: false,
-        })
-      );
-    } else {
-      const server = https.createServer(
-        {
-          key: readFileSync("server.key"),
-          cert: readFileSync("server.cert"),
-        },
-        this.app
-      );
-
-      server.listen();
-    }
-
+    this.app.use(
+      bodyParser.urlencoded({
+        extended: false,
+      })
+    );
     this.neistion = neistion;
 
     // If custom afterInit is present, run it.
