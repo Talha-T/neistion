@@ -88,7 +88,20 @@ export class ExpressApp implements IApp<Express> {
                 );
               }
             } else {
-              parameters[key] = schema[key]._(parameters[key]);
+              const func = schema[key]._;
+              if (typeof func === "function") {
+                parameters[key] = schema[key]._(parameters[key]);
+              }
+              if (Array.isArray(func)) {
+                const oldParameters = parameters[key];
+                parameters[key] = [];
+                const arrayFunc = func[0];
+                if (typeof arrayFunc === "function") {
+                  oldParameters.forEach((x: any) =>
+                    parameters[key].push(func[0](x))
+                  );
+                }
+              }
             }
           }
         });
