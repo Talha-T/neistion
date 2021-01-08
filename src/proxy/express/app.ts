@@ -94,9 +94,9 @@ export class ExpressApp implements IApp<Express> {
               }
               if (Array.isArray(func)) {
                 const oldParameters = parameters[key];
-                parameters[key] = [];
                 const arrayFunc = func[0];
                 if (typeof arrayFunc === "function") {
+                  parameters[key] = [];
                   oldParameters.forEach((x: any) =>
                     parameters[key].push(func[0](x))
                   );
