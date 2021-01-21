@@ -176,7 +176,7 @@ export class ExpressApp implements IApp<Express> {
           (route.getParamaters || (() => undefined))(req, res)
         );
         // Convert to json, if wanted.
-        this.neistion.send(res, result);
+        this.neistion.send(res, result, route.json);
         this.neistion.debug("Call successful!");
       } catch (err) {
         this.neistion.debug("Caught error: ");

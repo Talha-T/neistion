@@ -34,7 +34,7 @@ declare class Neistion<Q> implements INeistion<Q> {
     constructor(app: IApp<Q>, options?: NeistionOptions<Q>, autoSetup?: boolean);
     private app;
     debug(message: string): void;
-    send(res: IResponse, result: any): void;
+    send(res: IResponse, result: any, override?: boolean): void;
     private handleRoute;
     /**
      * Gets sandhands schema from Typescript class.

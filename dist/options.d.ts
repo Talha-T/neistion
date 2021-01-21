@@ -64,6 +64,10 @@ interface IApiRoute<T> {
      * The optional verify function, but with a callback instead.
      */
     verifyCallback?: (headers: IncomingHttpHeaders, parameters: IncomingParameters, returnCallback: (result: IStatusMessagePair | boolean) => void) => void;
+    /**
+     * The optional json value, overriding default value.
+     */
+    json?: boolean;
 }
 /**
  * Defines incoming parameters.

@@ -89,6 +89,10 @@ interface IApiRoute<T> {
     parameters: IncomingParameters,
     returnCallback: (result: IStatusMessagePair | boolean) => void
   ) => void;
+  /**
+   * The optional json value, overriding default value.
+   */
+  json?: boolean;
 }
 
 /**
