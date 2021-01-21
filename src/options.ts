@@ -1,4 +1,4 @@
-import { Express, RequestHandler, Request } from "express";
+import { Response, RequestHandler, Request } from "express";
 import { IncomingHttpHeaders } from "http";
 import { IApp } from "./proxy/universal";
 
@@ -48,7 +48,7 @@ interface IApiRoute<T> {
   /**
    * Gets parameters from the request object.
    */
-  getParamaters?: (req: Request) => any;
+  getParamaters?: (req: Request, res: Response) => any;
   /**
    * The http method for this api.
    */

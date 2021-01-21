@@ -161,7 +161,7 @@ class ExpressApp {
                     return;
                 }
                 // Call the API route.
-                const result = yield route.call(parameters, (route.getParamaters || (() => undefined))(req));
+                const result = yield route.call(parameters, (route.getParamaters || (() => undefined))(req, res));
                 // Convert to json, if wanted.
                 this.neistion.send(res, result);
                 this.neistion.debug("Call successful!");
