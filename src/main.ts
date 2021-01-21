@@ -58,7 +58,7 @@ class Neistion<Q> implements INeistion<Q> {
     }
   }
   public send(res: IResponse, result: any, override: boolean = false) {
-    if (this.options.json) {
+    if (!override && this.options.json) {
       res.send(JSON.stringify(result));
     } else {
       res.send(String(result));
