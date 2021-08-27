@@ -57,7 +57,7 @@ export class ExpressApp implements IApp<Express> {
 
     const routeMiddlewares = route.perRouteMiddlewares || [];
     const sandhandsOptions = {
-      strict: this.neistion.options.strictPropertyCheck || false,
+      strict: route.strict !== undefined ? route.strict :  this.neistion.options.strictPropertyCheck || false,
     };
     expressMethod(route.route, ...routeMiddlewares, async (req, res) => {
       this.neistion.debug("A call to: " + route.route);
@@ -68,7 +68,7 @@ export class ExpressApp implements IApp<Express> {
         // Get parameters considering method.
         const parameters = route.method === "GET" ? req.query : req.body;
 
-        const schema: any =
+        let schema: any =
           typeof route.parametersSchema === "string"
             ? getSandhandsSchema(route.parametersSchema)
             : route.parametersSchema;

@@ -59,6 +59,10 @@ interface IApiRoute<T> {
    */
   parametersSchema: ISandhandsSchema | string;
   /**
+   * Sets if strict property checking should be enabled for this route.
+   */
+  strict?: boolean;
+  /**
    * An array of middlewares to be run only for this route.
    */
   perRouteMiddlewares?: RequestHandler[];

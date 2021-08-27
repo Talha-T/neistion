@@ -58,7 +58,7 @@ class ExpressApp {
         const expressMethod = utils_1.getMethodFromMethodEnum(route.method, this.app);
         const routeMiddlewares = route.perRouteMiddlewares || [];
         const sandhandsOptions = {
-            strict: this.neistion.options.strictPropertyCheck || false,
+            strict: route.strict !== undefined ? route.strict : this.neistion.options.strictPropertyCheck || false,
         };
         expressMethod(route.route, ...routeMiddlewares, (req, res) => __awaiter(this, void 0, void 0, function* () {
             this.neistion.debug("A call to: " + route.route);
@@ -67,7 +67,7 @@ class ExpressApp {
             try {
                 // Get parameters considering method.
                 const parameters = route.method === "GET" ? req.query : req.body;
-                const schema = typeof route.parametersSchema === "string"
+                let schema = typeof route.parametersSchema === "string"
                     ? decorator_1.getSandhandsSchema(route.parametersSchema)
                     : route.parametersSchema;
                 // Converts parameters to correct type according to schema

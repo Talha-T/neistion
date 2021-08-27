@@ -40,8 +40,8 @@ class Neistion {
             console.log(message);
         }
     }
-    send(res, result, override = false) {
-        if (this.options.json) {
+    send(res, result, json = true) {
+        if (json && this.options.json) {
             res.send(JSON.stringify(result));
         }
         else {
